@@ -487,6 +487,54 @@ function makeCodeCell(opts) {
   return cell;
 }
 
+/* Map a common Python traceback to one plain-language sentence. Returns HTML or null. */
+function annotateError(txt) {
+  if (!txt) return null;
+  const rules = [
+    [/NameError: name '([^']+)' is not defined/, (m) =>
+      `Python doesn't recognise <code>${escapeHtml(m[1])}</code>. Check the spelling, make sure it's created <i>before</i> this line, and that any text has quotes around it.`],
+    [/(IndentationError|TabError)/, () =>
+      `Indentation is off. Every line inside an <code>if</code> / <code>for</code> / <code>def</code> must be indented the same amount — 4 spaces — and don't mix tabs with spaces.`],
+    [/(unterminated string literal|EOL while scanning string literal)/, () =>
+      `A string is missing its closing quote.`],
+    [/SyntaxError: .*was never closed/, () =>
+      `Something was opened and never closed — look for a missing <code>)</code>, <code>]</code> or <code>}</code>.`],
+    [/SyntaxError: .*expected ':'/, () =>
+      `A block header (<code>if</code>, <code>for</code>, <code>while</code>, <code>def</code>, <code>class</code>) needs a colon <code>:</code> at the end of the line.`],
+    [/'NoneType' object is not (subscriptable|iterable|callable)/, () =>
+      `A value is <code>None</code> where data was expected — often a function that finished without a <code>return</code>.`],
+    [/'(\w+)' object is not subscriptable/, (m) =>
+      `You used <code>[ ]</code> indexing on a <code>${escapeHtml(m[1])}</code>. That works on strings, lists, tuples and dicts — not <code>${escapeHtml(m[1])}</code>.`],
+    [/(can only concatenate str|unsupported operand type\(s\) for .*: 'str' and 'int'|must be str, not int|can't multiply sequence by non-int)/, () =>
+      `You're mixing text and numbers in one expression. Convert first with <code>str(...)</code> or <code>int(...)</code>.`],
+    [/missing \d+ required positional argument|takes \d+ positional arguments? but \d+/, () =>
+      `A function call has the wrong number of arguments — compare it with the function's <code>def</code> line.`],
+    [/IndexError: (list|string|tuple) index out of range/, () =>
+      `You asked for an item past the end. Valid indexes run from <code>0</code> to <code>len(x) - 1</code>.`],
+    [/KeyError: (.+)/, (m) =>
+      `The dictionary has no key <code>${escapeHtml(m[1].trim())}</code>. Check the spelling, or use <code>d.get(key, default)</code> for a safe lookup.`],
+    [/ZeroDivisionError/, () =>
+      `Something was divided by zero. Guard the divisor with an <code>if</code> before dividing.`],
+    [/RecursionError/, () =>
+      `A function keeps calling itself without hitting a base case that stops it.`],
+    [/ModuleNotFoundError: No module named '([^']+)'/, (m) =>
+      `The module <code>${escapeHtml(m[1])}</code> isn't available in this in-browser Python. Most of the standard library works; packages you'd normally <code>pip install</code> don't.`],
+    [/AttributeError: '?(\w+)'? object has no attribute '(\w+)'/, (m) =>
+      `A <code>${escapeHtml(m[1])}</code> has no <code>.${escapeHtml(m[2])}</code>. Check the method name and what type the variable actually holds.`],
+    [/invalid literal for int\(\) with base 10: (.+)/, (m) =>
+      `<code>int()</code> was given text that isn't a whole number: ${escapeHtml(m[1].trim())}.`],
+    [/(not enough|too many) values to unpack/, () =>
+      `The names on the left of <code>=</code> don't match the number of values on the right.`],
+    [/SyntaxError: invalid syntax/, () =>
+      `Python got confused here. Look just <i>before</i> the marked spot for a missing <code>:</code>, <code>,</code>, <code>)</code> or a typo.`],
+  ];
+  for (const [re, fn] of rules) {
+    const m = txt.match(re);
+    if (m) return fn(m);
+  }
+  return null;
+}
+
 function renderConsole(cons, res) {
   cons.innerHTML = "";
   const out = (res.stdout || "").replace(/\n+$/, "");
@@ -498,6 +546,12 @@ function renderConsole(cons, res) {
     const e = el("span", "c-err");
     e.textContent = res.error + "\n";
     cons.appendChild(e);
+    const hint = res.timedOut ? null : annotateError(res.error);
+    if (hint) {
+      const h = el("div", "err-hint");
+      h.innerHTML = "<b>Hint:</b> " + hint;
+      cons.appendChild(h);
+    }
   }
   if (!out && !res.error) {
     const s = el("span", "c-sys");
@@ -537,6 +591,17 @@ function lessonUnlocked(i) {
 function completedCount() {
   return CURRICULUM.filter((l) => Progress.lessonComplete(l)).length;
 }
+function isCheckpoint(l) { return !!(l && l.kind === "checkpoint"); }
+/* displayed lesson number: checkpoints don't take one, so earlier refs like "(L17)" stay accurate */
+function lessonNumber(i) {
+  if (isCheckpoint(CURRICULUM[i])) return null;
+  let n = 0;
+  for (let k = 0; k <= i; k++) if (!isCheckpoint(CURRICULUM[k])) n++;
+  return n;
+}
+function regularTotal() { return CURRICULUM.reduce((a, l) => a + (isCheckpoint(l) ? 0 : 1), 0); }
+/* tiny markdown: `code` spans only — used in realworld notes */
+function mdCode(s) { return String(s == null ? "" : s).replace(/`([^`]+)`/g, "<code>$1</code>"); }
 
 /* ---------------------------------------------------------
    6. Rendering: sidebar, home, lesson, playground
@@ -564,36 +629,46 @@ function renderSidebar() {
     const b = el("button", "nav-item");
     const unlocked = lessonUnlocked(i);
     const done = Progress.lessonComplete(lesson);
+    const cp = isCheckpoint(lesson);
     if (done) b.classList.add("done");
+    if (cp) b.classList.add("checkpoint");
     if (location.hash === "#/lesson/" + lesson.id) b.classList.add("active");
     b.disabled = !unlocked;
-    const badge = done ? "✓" : (unlocked ? String(i + 1) : "🔒");
-    b.innerHTML = `<span class="nav-badge">${badge}</span><span><span class="nav-title">${lesson.title}</span><br><span class="nav-sub">${lesson.exercises.length} exercise${lesson.exercises.length === 1 ? "" : "s"}</span></span>`;
+    const badge = done ? "✓" : (unlocked ? (cp ? "◆" : String(lessonNumber(i))) : "🔒");
+    const sub = cp
+      ? "Checkpoint · " + lesson.exercises.length + " part" + (lesson.exercises.length === 1 ? "" : "s")
+      : lesson.exercises.length + " exercise" + (lesson.exercises.length === 1 ? "" : "s");
+    b.innerHTML = `<span class="nav-badge">${badge}</span><span><span class="nav-title">${lesson.title}</span><br><span class="nav-sub">${sub}</span></span>`;
     b.addEventListener("click", () => { if (unlocked) location.hash = "#/lesson/" + lesson.id; });
     nav.appendChild(b);
   });
 
   const pct = Math.round((completedCount() / CURRICULUM.length) * 100);
   document.getElementById("progressBar").style.width = pct + "%";
-  document.getElementById("progressText").textContent = pct + "% complete · " + completedCount() + "/" + CURRICULUM.length + " lessons";
+  document.getElementById("progressText").textContent = pct + "% complete · " + completedCount() + "/" + CURRICULUM.length + " done";
 }
 
 function renderHome() {
   view.innerHTML = "";
+  const SECTION_COUNT = new Set(CURRICULUM.map((l) => l.section)).size;
+  const CP_COUNT = CURRICULUM.reduce((a, l) => a + (isCheckpoint(l) ? 1 : 0), 0);
   const hero = el("div", "home-hero");
   hero.innerHTML = `
     <div class="eyebrow">Interactive course</div>
-    <h1>Python, from first line to algorithms</h1>
-    <p>${CURRICULUM.length} hands-on lessons in two parts: the language fundamentals, then core
-    data structures &amp; algorithms. Every idea comes with a diagram, runnable examples you can
-    edit, "what if?" experiments, and auto-checked exercises on a difficulty ramp. Nothing is
-    quizzed before it is taught. Python runs right here in your browser.</p>
+    <h1>Python, from first line to shipping a framework</h1>
+    <p>${regularTotal()} hands-on lessons across ${SECTION_COUNT} sections — plus ${CP_COUNT}
+    checkpoint projects that make you combine what you've learned. The language fundamentals, data
+    structures &amp; algorithms, then the working toolkit: modules, packaging, OOP, environments,
+    concurrency, typing, formatters, docs, testing, and web frameworks. Every idea comes with a
+    diagram, runnable examples you can edit, "what if?" experiments, and auto-checked exercises on a
+    difficulty ramp. Nothing is quizzed before it is taught. Python runs right here in your browser.</p>
     <p style="font-size:13.5px;color:var(--muted)">Fundamentals adapted from
     <a href="https://cs50.harvard.edu/python/" target="_blank" rel="noopener">Harvard CS50’s Introduction to Programming with Python</a>
     and the <a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">official Python Tutorial</a>;
-    the algorithms part follows the same spirit as
-    <a href="https://cs50.harvard.edu/x/" target="_blank" rel="noopener">CS50x</a> and
-    <a href="https://docs.python.org/3/tutorial/datastructures.html" target="_blank" rel="noopener">the docs on data structures</a>.</p>
+    later sections draw on the official docs and each tool's own documentation
+    (<a href="https://peps.python.org/pep-0008/" target="_blank" rel="noopener">PEP 8</a>,
+    <a href="https://docs.pytest.org/" target="_blank" rel="noopener">pytest</a>,
+    <a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener">FastAPI</a>, and more).</p>
   `;
   view.appendChild(hero);
 
@@ -612,11 +687,14 @@ function renderHome() {
     const c = el("button", "home-card");
     const unlocked = lessonUnlocked(i);
     const done = Progress.lessonComplete(lesson);
+    const cp = isCheckpoint(lesson);
+    if (cp) c.classList.add("checkpoint");
     c.disabled = !unlocked;
     const state = done ? '<span class="hc-state done">✓ Completed</span>'
-      : unlocked ? '<span class="hc-state open">● Available</span>'
+      : unlocked ? `<span class="hc-state open">● ${cp ? "Ready" : "Available"}</span>`
       : '<span class="hc-state locked">🔒 Finish the previous lesson</span>';
-    c.innerHTML = `<div class="hc-num">Lesson ${i + 1}</div><div class="hc-title">${lesson.title}</div>
+    const num = cp ? "Checkpoint" : "Lesson " + lessonNumber(i);
+    c.innerHTML = `<div class="hc-num${cp ? " checkpoint" : ""}">${num}</div><div class="hc-title">${lesson.title}</div>
       <div class="hc-desc">${lesson.summary}</div>${state}`;
     c.addEventListener("click", () => { if (unlocked) location.hash = "#/lesson/" + lesson.id; });
     grid.appendChild(c);
@@ -642,8 +720,12 @@ function renderLesson(id) {
   view.scrollIntoView({ block: "start" });
   window.scrollTo(0, 0);
 
+  const cp = isCheckpoint(lesson);
   const head = el("div", "lesson-head");
-  head.innerHTML = `<div class="eyebrow">${lesson.section ? lesson.section + " · " : ""}Lesson ${i + 1} of ${CURRICULUM.length}</div>
+  const eyebrow = cp
+    ? `Checkpoint${lesson.section ? " · " + lesson.section : ""}`
+    : `${lesson.section ? lesson.section + " · " : ""}Lesson ${lessonNumber(i)} of ${regularTotal()}`;
+  head.innerHTML = `<div class="eyebrow">${eyebrow}</div>
     <h1 class="lesson-title">${lesson.title}</h1>
     <p class="lesson-lead">${lesson.lead}</p>`;
   view.appendChild(head);
@@ -662,6 +744,17 @@ function renderLesson(id) {
     }
   });
 
+  // "Try this for real" — commands to run outside the sandbox (concept lessons)
+  if (lesson.realworld) {
+    const rw = lesson.realworld;
+    const box = el("div", "real-world");
+    box.innerHTML = "<b>Try this for real</b>" +
+      `<p>${mdCode(rw.blurb) || "On your own machine, with Python installed:"}</p>` +
+      `<pre>${escapeHtml((rw.cmds || []).join("\n"))}</pre>` +
+      (rw.note ? `<p class="rw-note">${mdCode(rw.note)}</p>` : "");
+    body.appendChild(box);
+  }
+
   // References
   if (lesson.refs && lesson.refs.length) {
     const r = el("div", "note");
@@ -675,11 +768,15 @@ function renderLesson(id) {
   // Exercises
   const exWrap = el("div", "exercises");
   const doneN = lesson.exercises.filter((_, k) => Progress.exDone(lesson.id, k)).length;
-  exWrap.innerHTML = `<h2>Exercises <span class="ex-count">${doneN}/${lesson.exercises.length} passed</span></h2>
-    <p style="color:var(--ink-soft);margin-top:-4px">They build up: <b>warm-up</b> → <b>practice</b> → <b>challenge</b> → <b>boss</b>,
-    and most of them also lean on earlier lessons. If your code produces the right result it <strong>passes</strong>;
-    when there's a cleaner, more Pythonic way, a <strong>"level it up"</strong> tip appears with the ✓. A worked solution
-    sits at the bottom of each. Pass them all to unlock the next lesson.</p>`;
+  const exIntro = cp
+    ? `Build the project one part at a time — each part is checked on its own, and later parts reuse the
+       shape of the earlier ones. Finish all ${lesson.exercises.length} to unlock what's next.`
+    : `They build up: <b>warm-up</b> → <b>practice</b> → <b>challenge</b> → <b>boss</b>,
+       and most of them also lean on earlier lessons. If your code produces the right result it <strong>passes</strong>;
+       when there's a cleaner, more Pythonic way, a <strong>"level it up"</strong> tip appears with the ✓. A worked solution
+       sits at the bottom of each. Pass them all to unlock the next lesson.`;
+  exWrap.innerHTML = `<h2>${cp ? "Project" : "Exercises"} <span class="ex-count">${doneN}/${lesson.exercises.length} ${cp ? "done" : "passed"}</span></h2>
+    <p style="color:var(--ink-soft);margin-top:-4px">${exIntro}</p>`;
   if (lesson.spiral && lesson.spiral.length) {
     const yn = el("div", "you-need");
     yn.innerHTML = "<b>Keep these fresh — the exercises use them:</b><br>" + lesson.spiral.join(" &nbsp;·&nbsp; ");
@@ -696,11 +793,11 @@ function renderLesson(id) {
     if (Progress.lessonComplete(lesson)) {
       banner.className = "complete-banner";
       banner.innerHTML = (i + 1 < CURRICULUM.length)
-        ? `✅ <span>Lesson complete! <b>${CURRICULUM[i + 1].title}</b> is now unlocked.</span>`
-        : `🎉 <span>That’s the whole course. Every fundamental — done. Keep building in the Playground!</span>`;
+        ? `✅ <span>${cp ? "Checkpoint" : "Lesson"} complete! <b>${CURRICULUM[i + 1].title}</b> is now unlocked.</span>`
+        : `🎉 <span>That’s the whole course — every lesson, every checkpoint. Keep building in the Playground!</span>`;
     } else {
       banner.className = "complete-banner locked";
-      banner.innerHTML = `🔒 <span>Pass all ${lesson.exercises.length} exercises above to unlock the next lesson.</span>`;
+      banner.innerHTML = `🔒 <span>${cp ? "Finish" : "Pass"} all ${lesson.exercises.length} ${cp ? "parts" : "exercises"} above to unlock the next lesson.</span>`;
     }
   }
   view.addEventListener("ex-passed", () => { refreshBanner(); renderSidebar(); });
@@ -727,6 +824,7 @@ const TIERS = {
   core: { label: "practice", cls: "t-core" },
   challenge: { label: "challenge", cls: "t-chal" },
   boss: { label: "boss", cls: "t-boss" },
+  project: { label: "project", cls: "t-proj" },
 };
 
 function makeExercise(lesson, ex, k) {
@@ -737,8 +835,9 @@ function makeExercise(lesson, ex, k) {
   const uses = (ex.uses && ex.uses.length)
     ? `<span class="ex-uses">recalls: ${ex.uses.map((u) => `<span>${u}</span>`).join("")}</span>`
     : "";
+  const tag = ex.tier === "project" ? "Part " + (k + 1) : "Exercise " + (k + 1);
   head.innerHTML = `<span class="ex-status ${passed ? "done" : ""}" data-role="status">${passed ? "✓ passed" : ""}</span>
-    <span class="ex-tag">Exercise ${k + 1}</span><span class="ex-tier ${tier.cls}">${tier.label}</span>
+    <span class="ex-tag">${tag}</span><span class="ex-tier ${tier.cls}">${tier.label}</span>
     <h3>${ex.title}</h3>${uses}`;
   wrap.appendChild(head);
 
@@ -765,6 +864,7 @@ function makeExercise(lesson, ex, k) {
   bodyEl.appendChild(cons);
   const verdict = el("div", "verdict"); verdict.style.borderRadius = "8px"; verdict.style.marginTop = "8px";
   verdict.style.border = "1px solid var(--line)"; verdict.hidden = true;
+  verdict.setAttribute("role", "status"); verdict.setAttribute("aria-live", "polite");
   bodyEl.appendChild(verdict);
 
   if (ex.solution) {
@@ -855,8 +955,8 @@ async function gradeExercise(ex, code) {
 
   if (ex.mustDefine) {
     for (const name of ex.mustDefine) {
-      if (!new RegExp("def\\s+" + name + "\\s*\\(").test(code)) {
-        return { pass: false, message: `Define a function called ${name}(...).` };
+      if (!new RegExp("(def|class)\\s+" + name + "\\s*[(:]").test(code)) {
+        return { pass: false, message: `Define ${name} (a function or class).` };
       }
     }
   }
@@ -960,6 +1060,180 @@ function renderPlayground() {
 const PLAYGROUND_SAMPLE = "";
 
 /* ---------------------------------------------------------
+   8b. Reference card — a syntax cheat-sheet that grows as
+       lessons unlock (reads lesson.card)
+   --------------------------------------------------------- */
+function renderReference() {
+  view.innerHTML = "";
+  window.scrollTo(0, 0);
+  const head = el("div");
+  head.innerHTML = `<div class="eyebrow">Cheat sheet</div><h1>Reference card</h1>
+    <p class="ref-intro">A quick syntax reminder for everything you've unlocked so far. It fills in
+    as you complete lessons — nothing here you haven't been taught.</p>`;
+  view.appendChild(head);
+
+  let any = false, lastSection = null;
+  CURRICULUM.forEach((lesson, i) => {
+    if (isCheckpoint(lesson) || !lesson.card || !lessonUnlocked(i)) return;
+    any = true;
+    if (lesson.section !== lastSection) {
+      lastSection = lesson.section;
+      const h = el("div", "ref-section");
+      h.textContent = lesson.section;
+      view.appendChild(h);
+    }
+    const card = el("div", "ref-card");
+    card.innerHTML = `<h3>${lesson.title}</h3><p class="ref-sum">${lesson.summary}</p>` +
+      `<pre>${escapeHtml(lesson.card)}</pre>`;
+    view.appendChild(card);
+  });
+  if (!any) {
+    const p = el("p", "ref-locked");
+    p.textContent = "Finish a lesson and its syntax summary shows up here.";
+    view.appendChild(p);
+  }
+  const back = el("button", "subtle-btn");
+  back.textContent = "← Back to Overview";
+  back.style.marginTop = "18px";
+  back.addEventListener("click", () => { location.hash = "#/"; });
+  view.appendChild(back);
+}
+
+/* ---------------------------------------------------------
+   8c. Review mode — reshuffled practice from already-passed
+       exercises across the whole course
+   --------------------------------------------------------- */
+function renderReview() {
+  view.innerHTML = "";
+  window.scrollTo(0, 0);
+  const head = el("div");
+  head.innerHTML = `<div class="eyebrow">Spaced practice</div><h1>Review mode</h1>
+    <p class="ref-intro">A shuffled set drawn from exercises you've already passed — anywhere in the
+    course. Nothing here changes your progress; it's just to keep the earlier skills sharp.</p>`;
+  view.appendChild(head);
+
+  const pool = [];
+  CURRICULUM.forEach((lesson, i) => {
+    if (isCheckpoint(lesson) || !lessonUnlocked(i)) return;
+    lesson.exercises.forEach((ex, k) => {
+      if (Progress.exDone(lesson.id, k)) pool.push({ lesson, ex, k });
+    });
+  });
+
+  if (pool.length < 3) {
+    const p = el("p", "ref-locked");
+    p.textContent = "Pass at least 3 exercises first — then there's something to review.";
+    view.appendChild(p);
+    const back0 = el("button", "subtle-btn");
+    back0.textContent = "← Back to Overview";
+    back0.style.marginTop = "16px";
+    back0.addEventListener("click", () => { location.hash = "#/"; });
+    view.appendChild(back0);
+    return;
+  }
+
+  const controls = el("div", "review-controls");
+  const sizeSel = el("select");
+  [5, 8, 12].forEach((n) => {
+    const o = el("option"); o.value = String(n); o.textContent = n + " exercises"; sizeSel.appendChild(o);
+  });
+  const scopeSel = el("select");
+  const secs = [];
+  pool.forEach((p) => { if (!secs.includes(p.lesson.section)) secs.push(p.lesson.section); });
+  { const o = el("option"); o.value = "*"; o.textContent = "All sections"; scopeSel.appendChild(o); }
+  secs.forEach((s) => { const o = el("option"); o.value = s; o.textContent = s; scopeSel.appendChild(o); });
+  const shuffleBtn = el("button", "primary-btn");
+  shuffleBtn.textContent = "↻ New set";
+  const tally = el("div", "review-tally");
+  controls.appendChild(sizeSel);
+  controls.appendChild(scopeSel);
+  controls.appendChild(shuffleBtn);
+  controls.appendChild(tally);
+  view.appendChild(controls);
+
+  const host = el("div");
+  view.appendChild(host);
+  let roundPassed = 0;
+
+  function draw() {
+    host.innerHTML = "";
+    roundPassed = 0;
+    const scope = scopeSel.value;
+    const cand = pool.filter((p) => scope === "*" || p.lesson.section === scope).slice();
+    for (let x = cand.length - 1; x > 0; x--) {
+      const j = Math.floor(Math.random() * (x + 1));
+      const tmp = cand[x]; cand[x] = cand[j]; cand[j] = tmp;
+    }
+    const pick = cand.slice(0, parseInt(sizeSel.value, 10));
+    tally.textContent = `0 / ${pick.length} this round`;
+    pick.forEach(({ lesson, ex, k }) => {
+      const node = makeExercise(lesson, ex, k);
+      const origin = el("div", "review-origin");
+      origin.textContent = "from " + lesson.title + (isCheckpoint(lesson) ? " (checkpoint)" : "");
+      const b = node.querySelector(".ex-body");
+      if (b) b.appendChild(origin);
+      host.appendChild(node);
+    });
+  }
+  view.addEventListener("ex-passed", () => {
+    if (location.hash !== "#/review") return;
+    roundPassed++;
+    const total = host.querySelectorAll(".exercise").length;
+    tally.textContent = `${roundPassed} / ${total} this round`;
+  });
+  shuffleBtn.addEventListener("click", draw);
+  sizeSel.addEventListener("change", draw);
+  scopeSel.addEventListener("change", draw);
+  draw();
+
+  const back = el("button", "subtle-btn");
+  back.textContent = "← Back to Overview";
+  back.style.marginTop = "18px";
+  back.addEventListener("click", () => { location.hash = "#/"; });
+  view.appendChild(back);
+}
+
+/* ---------------------------------------------------------
+   8d. Progress export / import (a single JSON file)
+   --------------------------------------------------------- */
+function exportProgress() {
+  const payload = { app: "pystart", v: 1, savedAt: new Date().toISOString(), data: Progress.data };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "pystart-progress.json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+}
+function importProgress(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data = null;
+    try {
+      const parsed = JSON.parse(reader.result);
+      if (parsed && parsed.data && typeof parsed.data === "object") data = parsed.data;
+      else if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) data = parsed;
+    } catch (e) { /* fall through */ }
+    // shape check: an object whose every value is itself an object shaped like { ex: {...} }
+    const looksOk = data && typeof data === "object" && !Array.isArray(data) &&
+      Object.keys(data).every((k) => {
+        const v = data[k];
+        return v && typeof v === "object" && !Array.isArray(v) &&
+          (v.ex == null || (typeof v.ex === "object" && !Array.isArray(v.ex)));
+      });
+    if (!looksOk) { alert("That file doesn't look like a PyStart progress export."); return; }
+    if (!confirm("Replace your current progress with the contents of this file?")) return;
+    Progress.data = data;
+    Progress.save();
+    route();
+    alert("Progress imported.");
+  };
+  reader.readAsText(file);
+}
+
+/* ---------------------------------------------------------
    9. Router + boot
    --------------------------------------------------------- */
 function route() {
@@ -967,6 +1241,8 @@ function route() {
   const h = location.hash || "#/";
   if (h.startsWith("#/lesson/")) renderLesson(h.slice("#/lesson/".length));
   else if (h === "#/playground") renderPlayground();
+  else if (h === "#/reference") renderReference();
+  else if (h === "#/review") renderReview();
   else renderHome();
   renderSidebar();
 }
@@ -976,6 +1252,18 @@ document.getElementById("playgroundBtn").addEventListener("click", () => { locat
 document.getElementById("resetBtn").addEventListener("click", () => {
   if (confirm("Erase all saved progress and start over?")) { Progress.reset(); route(); }
 });
+(function wireExtras() {
+  const on = (id, fn) => { const b = document.getElementById(id); if (b) b.addEventListener("click", fn); };
+  on("reviewBtn", () => { location.hash = "#/review"; });
+  on("referenceBtn", () => { location.hash = "#/reference"; });
+  on("exportBtn", exportProgress);
+  const fileInput = document.getElementById("importFile");
+  on("importBtn", () => { if (fileInput) fileInput.click(); });
+  if (fileInput) fileInput.addEventListener("change", () => {
+    if (fileInput.files && fileInput.files[0]) importProgress(fileInput.files[0]);
+    fileInput.value = "";
+  });
+})();
 const themeBtn = document.getElementById("themeBtn");
 function applyTheme(t) {
   if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
@@ -994,6 +1282,42 @@ themeBtn.addEventListener("click", () => {
 route();
 Engine.init();
 
+/* ---------------------------------------------------------
+   10. Dev-only: grader self-test.
+   Confirms every reference solution PASSES and every
+   `antisolutions` entry FAILS. Run from the console:
+   await window.__pystart.selfTest()          // whole course
+   await window.__pystart.selfTest({only:"letter-grade"})
+   --------------------------------------------------------- */
+async function selfTest(opts) {
+  opts = opts || {};
+  const only = opts.only ? new Set([].concat(opts.only)) : null;
+  const rep = { checked: 0, solutionsOK: 0, solutionsFailed: [], antiChecked: 0, antiOK: 0, antiLeaked: [] };
+  for (const l of CURRICULUM) {
+    if (only && !only.has(l.id)) continue;
+    for (let k = 0; k < l.exercises.length; k++) {
+      const ex = l.exercises[k];
+      if (!ex.solution) continue;
+      rep.checked++;
+      let r;
+      try { r = await gradeExercise(ex, ex.solution); }
+      catch (e) { rep.solutionsFailed.push(`${l.id} #${k + 1} "${ex.title}" — threw ${e}`); continue; }
+      if (r.pass) rep.solutionsOK++;
+      else rep.solutionsFailed.push(`${l.id} #${k + 1} "${ex.title}" — ${r.message || "did not pass"}`);
+      for (const anti of (ex.antisolutions || [])) {
+        rep.antiChecked++;
+        let ar;
+        try { ar = await gradeExercise(ex, anti.code); }
+        catch (e) { rep.antiOK++; continue; }
+        if (!ar.pass) rep.antiOK++;
+        else rep.antiLeaked.push(`${l.id} #${k + 1} "${ex.title}" — WRONG code passed (${anti.why})`);
+      }
+    }
+  }
+  rep.ok = rep.solutionsFailed.length === 0 && rep.antiLeaked.length === 0;
+  return rep;
+}
+
 /* minimal debug hook */
-window.__pystart = { Engine, gradeExercise, CURRICULUM, Progress };
+window.__pystart = { Engine, gradeExercise, CURRICULUM, Progress, selfTest };
 })();

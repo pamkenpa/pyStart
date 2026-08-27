@@ -336,9 +336,83 @@ details.solution pre{font-family:var(--mono); font-size:12.5px; background:var(-
 /* ---------- misc ---------- */
 .kbd{font-family:var(--mono); font-size:11px; background:var(--panel-2); border:1px solid var(--line); border-bottom-width:2px; border-radius:5px; padding:1px 5px}
 .hide{display:none !important}
+
+/* ---------- "Try this for real" box (concept lessons) ---------- */
+.real-world{
+  border:1px solid var(--line); border-left:4px solid var(--warn); background:var(--warn-bg);
+  border-radius:10px; padding:12px 16px; margin:18px 0;
+}
+.real-world > b{display:block; font-size:13px; text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; color:var(--warn)}
+.real-world p{margin:4px 0; font-size:13px; color:var(--ink-soft)}
+.real-world pre{
+  font-family:var(--mono); font-size:12.5px; background:var(--code-bg); color:var(--code-ink);
+  padding:10px 12px; border-radius:8px; overflow-x:auto; margin:8px 0 4px; white-space:pre;
+}
+.real-world .rw-note{font-size:12px; color:var(--muted); margin-top:6px}
+
+/* ---------- checkpoint projects ---------- */
+.nav-item.checkpoint .nav-badge{background:#b8860b; color:#fff; border-color:transparent}
+.nav-item.checkpoint.done .nav-badge{background:var(--good)}
+.home-card.checkpoint{border-color:var(--box-line); background:linear-gradient(180deg,var(--box),var(--panel))}
+.home-card .hc-num.checkpoint{color:#b8860b; font-weight:700; text-transform:uppercase; letter-spacing:1px}
+.ex-tier.t-proj{background:#b8860b; color:#fff}
+.checkpoint-brief{
+  border:1px solid var(--box-line); border-left:4px solid #b8860b; background:var(--box);
+  border-radius:12px; padding:14px 18px; margin:8px 0 20px;
+}
+.checkpoint-brief b{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:#b8860b; margin-bottom:4px}
+
+/* ---------- friendly error hint ---------- */
+.console .err-hint{
+  display:block; margin-top:8px; padding:8px 10px; border-radius:7px;
+  background:var(--warn-bg); border:1px solid var(--warn); color:var(--ink-soft);
+  font-family:var(--sans); font-size:12.5px; white-space:normal; font-style:normal;
+}
+.console .err-hint b{color:var(--warn)}
+
+/* ---------- reference card page ---------- */
+.ref-intro{font-size:15px; color:var(--ink-soft); max-width:64ch}
+.ref-section{font-size:13px; text-transform:uppercase; letter-spacing:1.4px; color:var(--accent); margin:26px 0 6px; border-top:1px solid var(--line); padding-top:14px}
+.ref-card{border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:10px 0; background:var(--panel)}
+.ref-card h3{margin:0 0 2px; font-size:15px}
+.ref-card .ref-sum{font-size:12.5px; color:var(--muted); margin:0 0 6px}
+.ref-card pre{font-family:var(--mono); font-size:12.5px; background:var(--code-bg); color:var(--code-ink); padding:10px 12px; border-radius:8px; overflow-x:auto; margin:6px 0 0; white-space:pre}
+.ref-locked{font-size:13px; color:var(--muted); font-style:italic; margin-top:8px}
+
+/* ---------- review mode ---------- */
+.review-head{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:10px 0 6px}
+.review-controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:12px 0 20px}
+.review-controls select{font:inherit; font-size:13px; padding:6px 8px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--ink)}
+.review-tally{font-size:13px; font-weight:700; color:var(--muted); background:var(--panel-2); border:1px solid var(--line); border-radius:999px; padding:2px 12px}
+.review-origin{font-size:11px; color:var(--muted); margin-top:6px}
+
+/* ---------- accessibility ---------- */
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important}
+}
+
+/* ---------- responsive ---------- */
 @media (max-width:860px){
   #app{grid-template-columns:1fr}
   #sidebar{position:static; height:auto; border-right:0; border-bottom:1px solid var(--line)}
   #lessonNav{max-height:40vh}
   #view{padding:26px 18px 100px}
+}
+@media (max-width:560px){
+  #view{padding:20px 13px 90px}
+  h1.lesson-title{font-size:25px}
+  .lesson-lead{font-size:15px}
+  .home-hero h1{font-size:25px}
+  .home-hero p{font-size:14.5px}
+  .lesson-body h2{font-size:19px; margin-top:26px}
+  .home-grid{grid-template-columns:1fr}
+  .editor-hl,.editor-ta,.gutter{font-size:12px}
+  .cell-actions{gap:6px}
+  .cell-actions .primary-btn,.cell-actions .check-btn{flex:1 1 auto; text-align:center}
+  .lesson-foot{flex-direction:column}
+  .lesson-foot button{width:100%}
+  .exercises{margin-top:32px}
+  .ex-head,.ex-body{padding-left:12px; padding-right:12px}
+  table.tbl{display:block; overflow-x:auto; white-space:nowrap}
 }
