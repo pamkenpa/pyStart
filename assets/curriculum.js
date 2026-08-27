@@ -28,6 +28,7 @@ const CURRICULUM = [
 /* ========================================================== 1 */
 {
   id: "syntax",
+  section: "Learn the basics",
   title: "Basic syntax",
   summary: "How a Python program is written and run: statements, print(), quotes, escape characters, and the # comment.",
   lead: "A program is a list of instructions the computer follows from top to bottom. Before anything clever, you need to be fluent in the shapes: a call, a string, a comment, a newline.",
@@ -253,6 +254,7 @@ print("Visible output")   # a comment can sit at the end of a line too
 /* ========================================================== 2 */
 {
   id: "variables",
+  section: "Learn the basics",
   title: "Variables & data types",
   summary: "Store values in named variables; know Python's core types: int, float, str, bool, None.",
   lead: "A variable is a name tied to a value. Master this and you stop repeating yourself — compute once, name it, reuse it everywhere.",
@@ -447,6 +449,7 @@ print(type(None))` },
 /* ========================================================== 3 */
 {
   id: "operators",
+  section: "Learn the basics",
   title: "Operators",
   summary: "Do arithmetic, compare values, and combine yes/no facts with and / or / not.",
   lead: "Operators are how values interact: +, -, *, /, the comparisons, and the logical words. Get comfortable here and conditionals & loops become easy.",
@@ -689,6 +692,7 @@ print(count)` },
 /* ========================================================== 4 */
 {
   id: "strings",
+  section: "Learn the basics",
   title: "Working with strings",
   summary: "Index, slice, join, and transform text; build messages with f-strings.",
   lead: "Text is data. To work with it fluently you need to reach any character by position, take any slice, and reshape it with methods — without ever mutating the original.",
@@ -972,6 +976,7 @@ print(f"{name} + {pets} more")` },
 /* ========================================================== 5 */
 {
   id: "conditionals",
+  section: "Learn the basics",
   title: "Conditionals",
   summary: "Run different code depending on whether a condition is True: if / elif / else.",
   lead: "Programs make decisions. Everything here rests on Lesson 3: a condition is just an expression that evaluates to True or False. The new part is choosing what runs next.",
@@ -1272,6 +1277,7 @@ else:
 /* ========================================================== 6 */
 {
   id: "loops",
+  section: "Learn the basics",
   title: "Loops",
   summary: "Repeat work with for and while; steer them with break and continue; master the accumulator.",
   lead: "This is where programs get powerful. A loop plus a condition plus an accumulator variable can answer almost any 'how many / what's the total / does any of them' question.",
@@ -1546,6 +1552,7 @@ print("Lift off!")` },
 /* ========================================================== 7 */
 {
   id: "collections",
+  section: "Learn the basics",
   title: "Lists, tuples, sets",
   summary: "Three ways to hold many values: the mutable list, the fixed tuple, the unique set.",
   lead: "You already looped over strings and built up totals. Now the thing you loop over — and the thing you build up — can be a collection of any values.",
@@ -1819,6 +1826,7 @@ print(unique)` },
 /* ========================================================== 8 */
 {
   id: "dicts",
+  section: "Learn the basics",
   title: "Dictionaries",
   summary: "Store data as key → value pairs and look things up by name instead of position.",
   lead: "A list finds things by position; a dictionary finds them by name. Once you can loop-and-count into a dict, you can summarise almost any data.",
@@ -2034,6 +2042,7 @@ print("s appears", counts["s"], "times")` },
 /* ========================================================== 9 */
 {
   id: "casting",
+  section: "Learn the basics",
   title: "Type casting",
   summary: "Convert between types with int(), float(), str(), bool() — and read input().",
   lead: "Data arrives as the wrong type constantly — text from input(), digits inside a string. Casting is the bridge, and it's where a lot of real bugs live.",
@@ -2234,6 +2243,7 @@ print(bool([1, 2]))` },
 /* ========================================================== 10 */
 {
   id: "functions",
+  section: "Learn the basics",
   title: "Functions & built-in functions",
   summary: "Package code into reusable functions with def and return; tour the essential built-ins.",
   lead: "Everything you've written so far has been a one-shot script. A function lets you name a piece of logic and reuse it — with different inputs — anywhere. This is the biggest step-up in the course.",
@@ -2496,6 +2506,7 @@ for i, value in enumerate(["a", "b", "c"]):
 /* ========================================================== 11 */
 {
   id: "exceptions",
+  section: "Learn the basics",
   title: "Exceptions",
   summary: "Handle errors gracefully with try / except / else / finally, and raise your own.",
   lead: "Real input is messy. int() gets a word, a list index is off the end, a divisor is zero. Exceptions let your program notice, respond, and carry on instead of crashing.",
@@ -2724,6 +2735,7 @@ except ValueError as e:
 /* ========================================================== 12 */
 {
   id: "comments-annotations",
+  section: "Learn the basics",
   title: "Comments & type annotations",
   summary: "Write comments and docstrings that help, and add type hints that document your intent.",
   lead: "You can now write real programs. This last lesson is about writing them so a human — future you, a teammate — can read them: comments that add value, docstrings, and type hints.",
@@ -2972,6 +2984,1673 @@ print(repeat("x", "2".__len__()))` },
       tests: [
         { append: `print(clamp(5, 0, 10), clamp(-3, 0, 10), clamp(99, 0, 10))`, expect: "5 0 10" },
         { append: `print(clamp.__doc__ is not None)`, expect: "True" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 13 */
+{
+  id: "arrays-linked-lists",
+  section: "Data Structures & Algorithms",
+  title: "Arrays and Linked Lists",
+  summary: "Two ways to store a sequence: a contiguous array (fast index) vs a chain of linked nodes (fast insert).",
+  lead: "You've used Python's list for a dozen lessons. Now look under the hood — and meet its opposite. The choice between them is the first real data-structure decision.",
+  spiral: ["lists: index, append, insert, slice (L7)", "dicts as records (L8)", "functions & return (L10)", "while loops (L6)", "None (L2, L11)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · Two shapes for \u201ca sequence of things\u201d</h2>
+      <p>An <strong>array</strong> stores its items <em>side by side</em> in memory. Item <code>i</code>
+      lives at <code>start + i * size</code>, so <code>a[i]</code> is one instant jump — no matter how
+      big the array. The catch: inserting at the front means <em>shifting every other item over</em>.</p>
+      <p>A <strong>linked list</strong> stores each item in its own little box (a <em>node</em>) that also
+      holds a pointer to the <em>next</em> box. The boxes can be anywhere. Following the chain to item
+      <code>i</code> takes <code>i</code> hops — but adding a new box at the front is a single step.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="array versus linked list">
+        <text x="20" y="24" font-size="13" font-weight="bold" fill="var(--ink)">array — contiguous, index = address maths</text>
+        <g font-family="monospace" font-size="14">
+          <rect x="20" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="76" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="132" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="188" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="244" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <text x="48" y="61" text-anchor="middle" fill="var(--ink)">10</text>
+          <text x="104" y="61" text-anchor="middle" fill="var(--ink)">20</text>
+          <text x="160" y="61" text-anchor="middle" fill="var(--ink)">30</text>
+          <text x="216" y="61" text-anchor="middle" fill="var(--ink)">40</text>
+          <text x="272" y="61" text-anchor="middle" fill="var(--ink)">50</text>
+        </g>
+        <g font-family="monospace" font-size="11" fill="var(--accent)">
+          <text x="48" y="94" text-anchor="middle">0</text><text x="104" y="94" text-anchor="middle">1</text>
+          <text x="160" y="94" text-anchor="middle">2</text><text x="216" y="94" text-anchor="middle">3</text>
+          <text x="272" y="94" text-anchor="middle">4</text>
+        </g>
+        <text x="330" y="61" font-size="12" fill="var(--ink-soft)">a[3] &rarr; one jump. insert(0, x) &rarr; shift 4 items.</text>
+
+        <text x="20" y="140" font-size="13" font-weight="bold" fill="var(--ink)">linked list — scattered nodes joined by \u201cnext\u201d</text>
+        <text x="20" y="164" font-size="11" font-family="monospace" fill="var(--accent)">head</text>
+        <line x1="20" y1="170" x2="20" y2="188" stroke="var(--ink-soft)"/>
+        <g font-family="monospace" font-size="13">
+          <rect x="20" y="188" width="90" height="40" fill="var(--box)" stroke="var(--box-line)"/>
+          <line x1="80" y1="188" x2="80" y2="228" stroke="var(--box-line)"/>
+          <text x="50" y="213" text-anchor="middle" fill="var(--ink)">10</text>
+          <rect x="180" y="188" width="90" height="40" fill="var(--box)" stroke="var(--box-line)"/>
+          <line x1="240" y1="188" x2="240" y2="228" stroke="var(--box-line)"/>
+          <text x="210" y="213" text-anchor="middle" fill="var(--ink)">20</text>
+          <rect x="340" y="188" width="90" height="40" fill="var(--box)" stroke="var(--box-line)"/>
+          <line x1="400" y1="188" x2="400" y2="228" stroke="var(--box-line)"/>
+          <text x="370" y="213" text-anchor="middle" fill="var(--ink)">30</text>
+        </g>
+        <line x1="80" y1="208" x2="180" y2="208" stroke="var(--accent)" marker-end="url(#ah13)"/>
+        <line x1="240" y1="208" x2="340" y2="208" stroke="var(--accent)" marker-end="url(#ah13)"/>
+        <text x="430" y="213" font-size="13" font-family="monospace" fill="var(--ink-soft)">&rarr; None</text>
+        <defs><marker id="ah13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="var(--accent)"/></marker></defs>
+      </svg>`, `Same five values, two layouts. Arrays win at random access; linked lists win at front insertion.`)}
+      <table class="tbl">
+        <tr><th>Operation</th><th>Array (Python <code>list</code>)</th><th>Linked list</th></tr>
+        <tr><td>read item <code>i</code></td><td><b>fast</b> — one step</td><td>slow — <code>i</code> hops</td></tr>
+        <tr><td>insert / remove at front</td><td>slow — shift everything</td><td><b>fast</b> — one step</td></tr>
+        <tr><td>insert / remove at back</td><td><b>fast</b> (amortised)</td><td>slow — walk to the tail</td></tr>
+        <tr><td>memory</td><td>tight, one block</td><td>extra pointer per item</td></tr>
+      </table>` },
+
+    { type: "html", html: `
+      <h2>2 · Python's <code>list</code> is a dynamic array</h2>
+      <p>Everything you know about <code>list</code> from Lesson 7 is an array in disguise:
+      <code>a[i]</code> is instant; <code>a.append(x)</code> is (usually) instant; but
+      <code>a.insert(0, x)</code> and <code>a.pop(0)</code> quietly move every other element.</p>` },
+    { type: "code", title: "Array moves you don't see", code: `a = [10, 20, 30, 40, 50]
+print(a[3])          # instant, no matter the size
+
+a.insert(0, 5)       # every element shifted right by one
+print(a)
+
+a.pop(2)             # everything after index 2 shifts left
+print(a)` },
+    { type: "html", html: whatif([
+      "the list had a million items — would <code>a[500000]</code> be slower than <code>a[3]</code>?",
+      "you called <code>a.insert(0, x)</code> a million times — fast or slow overall?",
+      "you only ever add/remove at the <em>end</em> — is a plain list a good choice?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>3 · Building a linked list with dict nodes</h2>
+      <p>A real linked list uses a class (a later topic). To see the <em>structure</em> clearly we'll
+      use a <strong>dict per node</strong>: <code>{"val": ..., "next": ...}</code>. The last node's
+      <code>"next"</code> is <code>None</code>. One variable, <code>head</code>, points at the first node.</p>` },
+    { type: "code", title: "Three nodes, chained", code: `third  = {"val": 30, "next": None}
+second = {"val": 20, "next": third}
+head   = {"val": 10, "next": second}
+
+print(head["val"])
+print(head["next"]["val"])
+print(head["next"]["next"]["val"])
+print(head["next"]["next"]["next"])   # None -> end of the list` },
+
+    { type: "html", html: `
+      <h2>4 · The traversal loop — memorise this shape</h2>
+      <p>Start at <code>head</code>. While the current node isn't <code>None</code>, use it, then
+      <em>step to <code>node["next"]</code></em>. This loop is to linked lists what
+      <code>for x in list</code> is to arrays.</p>` },
+    { type: "code", title: "Walk every node", code: `head = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}
+
+node = head
+while node is not None:
+    print(node["val"])
+    node = node["next"]      # <-- the step that ends the loop` },
+    { type: "html", html: whatif([
+      "you forget the <code>node = node[\"next\"]</code> line — what happens?",
+      "the list is empty (<code>head is None</code>) — does the loop body run at all?",
+      "you write <code>while node[\"next\"] is not None</code> instead — which node gets missed?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>5 · Prepend is cheap; append is a walk</h2>
+      <p>To add to the <strong>front</strong>: make a new node whose <code>"next"</code> is the old
+      head, then move <code>head</code>. One step. To add to the <strong>back</strong>: you must walk
+      all the way to the last node first.</p>` },
+    { type: "code", title: "push_front vs append", code: `head = {"val": 20, "next": {"val": 30, "next": None}}
+
+# prepend 10  (O(1))
+head = {"val": 10, "next": head}
+
+# append 40  (O(n): walk to the tail)
+node = head
+while node["next"] is not None:
+    node = node["next"]
+node["next"] = {"val": 40, "next": None}
+
+node = head
+while node is not None:
+    print(node["val"], end=" ")
+    node = node["next"]` },
+    { type: "html", html: `
+      <div class="predict"><b>Predict first</b>After the two operations above, what does the final loop
+      print? Now: if you swapped the order (append first, then prepend), would the output change?</div>
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li><strong>Array</strong>: contiguous; <code>a[i]</code> is O(1); front insert/remove is O(n).</li>
+        <li>Python's <code>list</code> is a dynamic array — <code>insert(0, …)</code> / <code>pop(0)</code> are secretly O(n).</li>
+        <li><strong>Linked list</strong>: nodes <code>{"val", "next"}</code> chained to <code>None</code>; one <code>head</code>.</li>
+        <li>Traversal: <code>node = head; while node is not None: … ; node = node["next"]</code>.</li>
+        <li>Prepend is O(1); reaching or appending at the end is O(n).</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Python docs — Using lists as arrays / data structures", url: "https://docs.python.org/3/tutorial/datastructures.html" },
+    { label: "Python Wiki — Time complexity of list operations", url: "https://wiki.python.org/moin/TimeComplexity" },
+    { label: "CS50 — Data Structures (linked lists)", url: "https://cs50.harvard.edu/x/notes/5/" },
+  ],
+  exercises: [
+    {
+      title: "Front vs back",
+      tier: "warm", uses: ["list.insert / append (L7)"],
+      prompt: `<p>Start from <code>a = [1, 2, 3]</code>. Append <code>4</code>, then insert <code>0</code>
+        at the front. Print the list.</p><pre>[0, 1, 2, 3, 4]</pre>`,
+      starter: `a = [1, 2, 3]\n`,
+      solution: `a = [1, 2, 3]\na.append(4)\na.insert(0, 0)\nprint(a)`,
+      success: "append is cheap; insert(0, …) shifts everything — cheap here, costly at scale.",
+      tests: [{ expect: "[0, 1, 2, 3, 4]" }],
+    },
+    {
+      title: "Read the third node",
+      tier: "warm", uses: ["dict access (L8)"],
+      prompt: `<p>The starter builds a 3-node list. Print the value of the <strong>third</strong> node by
+        following <code>"next"</code> twice.</p><pre>30</pre>`,
+      starter: `head = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}\n`,
+      solution: `head = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}\nprint(head["next"]["next"]["val"])`,
+      success: "Each [\"next\"] is one hop along the chain.",
+      tests: [{ expect: "30" }],
+    },
+    {
+      title: "length(head)",
+      tier: "core", uses: ["traversal loop", "accumulator (L6)", "functions (L10)"],
+      prompt: `<p>Define <code>length(head)</code> returning how many nodes are in the linked list
+        (<code>0</code> for an empty list, i.e. <code>head is None</code>).</p>`,
+      solution: `def length(head):\n    n = 0\n    node = head\n    while node is not None:\n        n += 1\n        node = node["next"]\n    return n`,
+      success: "The traversal loop with a counter.",
+      mustDefine: ["length"],
+      tests: [
+        { append: `print(length({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "3" },
+        { append: `print(length(None))`, expect: "0" },
+        { append: `print(length({"val": 9, "next": None}))`, expect: "1" },
+      ],
+    },
+    {
+      title: "sum_list(head)",
+      tier: "core", uses: ["traversal", "accumulator (L6)"],
+      prompt: `<p>Define <code>sum_list(head)</code> returning the total of every node's <code>"val"</code>
+        (<code>0</code> for empty).</p>`,
+      solution: `def sum_list(head):\n    total = 0\n    node = head\n    while node is not None:\n        total += node["val"]\n        node = node["next"]\n    return total`,
+      success: "Same loop, different accumulator.",
+      mustDefine: ["sum_list"],
+      tests: [
+        { append: `print(sum_list({"val": 5, "next": {"val": 10, "next": {"val": 2, "next": None}}}))`, expect: "17" },
+        { append: `print(sum_list(None))`, expect: "0" },
+      ],
+    },
+    {
+      title: "to_list(head)",
+      tier: "core", uses: ["traversal", "build a list (L7)", "functions (L10)"],
+      prompt: `<p>Define <code>to_list(head)</code> returning a plain Python list of the node values in
+        order.</p>`,
+      solution: `def to_list(head):\n    out = []\n    node = head\n    while node is not None:\n        out.append(node["val"])\n        node = node["next"]\n    return out`,
+      success: "Collect values into an array as you walk the chain.",
+      mustDefine: ["to_list"],
+      tests: [
+        { append: `print(to_list({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "[1, 2, 3]" },
+        { append: `print(to_list(None))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "from_list(values)",
+      tier: "core", uses: ["loop over list (L6, L7)", "node dicts", "prepend trick"],
+      prompt: `<p>Define <code>from_list(values)</code> that builds a linked list from a Python list and
+        returns its <code>head</code>. Order must match. (Tip: walk <code>values</code> backwards and
+        prepend, or build front-to-back tracking a <code>tail</code>.)</p>`,
+      solution: `def from_list(values):\n    head = None\n    for v in reversed(values):\n        head = {"val": v, "next": head}\n    return head`,
+      success: "Prepending in reverse order lands everything in the right place.",
+      mustDefine: ["from_list"],
+      tests: [
+        { append: `h = from_list([1, 2, 3])\nout = []\nwhile h is not None:\n    out.append(h["val"])\n    h = h["next"]\nprint(out)`, expect: "[1, 2, 3]" },
+        { append: `print(from_list([]))`, expect: "None" },
+      ],
+    },
+    {
+      title: "contains(head, target)",
+      tier: "challenge", uses: ["traversal", "if / return early (L5, L10)", "bool"],
+      prompt: `<p>Define <code>contains(head, target)</code> returning <code>True</code> if any node's
+        value equals <code>target</code>, else <code>False</code>.</p>`,
+      solution: `def contains(head, target):\n    node = head\n    while node is not None:\n        if node["val"] == target:\n            return True\n        node = node["next"]\n    return False`,
+      success: "Return True the moment you find it; if the loop ends, it's not there.",
+      mustDefine: ["contains"],
+      tests: [
+        { append: `h = {"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}\nprint(contains(h, 2), contains(h, 9))`, expect: "True False" },
+        { append: `print(contains(None, 1))`, expect: "False" },
+      ],
+    },
+    {
+      title: "nth(head, i)",
+      tier: "challenge", uses: ["traversal with a counter", "if / return (L5)"],
+      prompt: `<p>Define <code>nth(head, i)</code> returning the value of node <code>i</code> (0-indexed),
+        or the string <code>"out of range"</code> if <code>i</code> is too big or negative.</p>`,
+      solution: `def nth(head, i):\n    if i < 0:\n        return "out of range"\n    node = head\n    count = 0\n    while node is not None:\n        if count == i:\n            return node["val"]\n        count += 1\n        node = node["next"]\n    return "out of range"`,
+      success: "Hop i times; if you fall off the end first, it's out of range.",
+      mustDefine: ["nth"],
+      tests: [
+        { append: `h = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}\nprint(nth(h, 0), nth(h, 2), nth(h, 3), nth(h, -1))`, expect: "10 30 out of range out of range" },
+      ],
+    },
+    {
+      title: "reverse(head)",
+      tier: "challenge", uses: ["traversal", "three-pointer rewiring", "None (L2)"],
+      prompt: `<p>Define <code>reverse(head)</code> that reverses the links and returns the new head.
+        Classic technique: keep <code>prev</code>, walk the list, and on each node point its
+        <code>"next"</code> back at <code>prev</code>.</p>`,
+      solution: `def reverse(head):\n    prev = None\n    node = head\n    while node is not None:\n        nxt = node["next"]\n        node["next"] = prev\n        prev = node\n        node = nxt\n    return prev`,
+      success: "Save the next node before you overwrite the pointer — then slide prev and node forward.",
+      mustDefine: ["reverse"],
+      tests: [
+        { append: `h = {"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}\nr = reverse(h)\nout = []\nwhile r is not None:\n    out.append(r["val"])\n    r = r["next"]\nprint(out)`, expect: "[3, 2, 1]" },
+        { append: `print(reverse(None))`, expect: "None" },
+      ],
+    },
+    {
+      title: "middle(head)",
+      tier: "boss", uses: ["two-pointer (slow / fast)", "traversal", "functions (L10)"],
+      prompt: `<p>Define <code>middle(head)</code> returning the value of the middle node in one pass —
+        <strong>without</strong> first counting the length. Use two pointers: <code>slow</code> moves
+        one step, <code>fast</code> moves two; when <code>fast</code> runs off the end, <code>slow</code>
+        is at the middle. For an even count, return the <em>second</em> of the two middles. Assume
+        a non-empty list.</p>`,
+      solution: `def middle(head):\n    slow = head\n    fast = head\n    while fast is not None and fast["next"] is not None:\n        slow = slow["next"]\n        fast = fast["next"]["next"]\n    return slow["val"]`,
+      success: "The fast pointer covers the list in half the steps, so slow lands dead centre.",
+      mustDefine: ["middle"],
+      tests: [
+        { append: `print(middle({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "2" },
+        { append: `print(middle({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": {"val": 4, "next": None}}}}))`, expect: "3" },
+        { append: `print(middle({"val": 42, "next": None}))`, expect: "42" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 14 */
+{
+  id: "hashmaps",
+  section: "Data Structures & Algorithms",
+  title: "HashMaps",
+  summary: "How a dictionary gives O(1) lookups: hashing a key to a bucket, handling collisions, and why it beats scanning a list.",
+  lead: "You've used Python's dict since Lesson 8. Now see the machine inside it — a hash function, an array of buckets — and build a tiny one yourself.",
+  spiral: ["dicts: keys, .get, .items (L8)", "lists & append (L7)", "loops (L6)", "% operator (L3)", "loop over a string (L4, L6)", "functions & return (L10)", "sorted (built-in)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · The idea: turn a key into an index</h2>
+      <p>An array gives instant access <em>by number</em>. A hashmap gives instant access <em>by any
+      key</em> — by running the key through a <strong>hash function</strong> that spits out a number,
+      then folding that number into a valid slot with <code>% number_of_slots</code>.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="key hashed to a bucket index">
+        <rect x="20" y="70" width="90" height="44" rx="8" fill="var(--panel-2)" stroke="var(--line)"/>
+        <text x="65" y="97" text-anchor="middle" font-size="14" font-family="monospace" fill="var(--accent)">"cat"</text>
+        <text x="120" y="97" font-size="20" fill="var(--ink-soft)">&rarr;</text>
+        <rect x="150" y="64" width="140" height="56" rx="10" fill="var(--box)" stroke="var(--box-line)"/>
+        <text x="220" y="88" text-anchor="middle" font-size="12" font-family="monospace" fill="var(--ink)">hash("cat")</text>
+        <text x="220" y="108" text-anchor="middle" font-size="12" font-family="monospace" fill="var(--ink)">= 312</text>
+        <text x="300" y="97" font-size="20" fill="var(--ink-soft)">&rarr;</text>
+        <rect x="330" y="64" width="140" height="56" rx="10" fill="var(--box)" stroke="var(--box-line)"/>
+        <text x="400" y="88" text-anchor="middle" font-size="12" font-family="monospace" fill="var(--ink)">312 % 8</text>
+        <text x="400" y="108" text-anchor="middle" font-size="12" font-family="monospace" fill="var(--accent)">= 0</text>
+        <text x="480" y="97" font-size="20" fill="var(--ink-soft)">&rarr;</text>
+        <g font-family="monospace" font-size="11">
+          <rect x="510" y="30" width="34" height="24" fill="var(--accent)" stroke="var(--box-line)"/>
+          <text x="527" y="47" text-anchor="middle" fill="#fff">0</text>
+          <rect x="510" y="54" width="34" height="24" fill="var(--panel-2)" stroke="var(--line)"/><text x="527" y="71" text-anchor="middle" fill="var(--ink-soft)">1</text>
+          <rect x="510" y="78" width="34" height="24" fill="var(--panel-2)" stroke="var(--line)"/><text x="527" y="95" text-anchor="middle" fill="var(--ink-soft)">2</text>
+          <rect x="510" y="102" width="34" height="24" fill="var(--panel-2)" stroke="var(--line)"/><text x="527" y="119" text-anchor="middle" fill="var(--ink-soft)">…</text>
+          <rect x="510" y="126" width="34" height="24" fill="var(--panel-2)" stroke="var(--line)"/><text x="527" y="143" text-anchor="middle" fill="var(--ink-soft)">7</text>
+        </g>
+        <text x="527" y="170" text-anchor="middle" font-size="11" fill="var(--ink-soft)">buckets</text>
+      </svg>`, `Same key -> same number -> same bucket, every time. That's why lookup is one step, not a search.`)}
+      <p>Python has a built-in <code>hash(x)</code> for this. It returns a (possibly huge, possibly
+      negative) integer. To turn any hashable value into a bucket slot: <code>hash(key) % n_buckets</code>
+      — take <code>abs(...)</code> first if you want to avoid a negative index.</p>` },
+    { type: "code", title: "hash() and a bucket index", code: `print(hash(42))
+print(hash("cat") == hash("cat"))   # always equal for the same value in one run
+n = 8
+key = 42
+print(hash(key) % n)` },
+    { type: "html", html: `
+      <div class="note"><b>Why we'll use our own hash below</b>
+      Python randomises string hashing between program runs (a security feature), so
+      <code>hash("cat")</code> isn't the same number tomorrow. For predictable exercises we'll build a
+      tiny deterministic hash from <code>ord(ch)</code> — the code number of a character
+      (<code>ord("A")</code> is 65).</p></div>` },
+    { type: "code", title: "ord() and a toy hash", code: `print(ord("A"), ord("a"), ord("0"))
+
+def simple_hash(s):
+    total = 0
+    for ch in s:
+        total += ord(ch)
+    return total
+
+print(simple_hash("cat"))
+print(simple_hash("act"))   # same letters -> same toy hash (a real one wouldn't collide so easily)` },
+
+    { type: "html", html: `
+      <h2>2 · Why it beats a list</h2>
+      <p>Find a key in a list of <code>n</code> pairs: you might check all <code>n</code>. Find a key in
+      a hashmap: hash it, go straight to one bucket, check the handful of items there. On average that's
+      <strong>constant time</strong> regardless of size.</p>
+      <table class="tbl">
+        <tr><th>Operation</th><th>list of pairs</th><th>hashmap (dict)</th></tr>
+        <tr><td>look up / update by key</td><td>O(n) scan</td><td><b>O(1)</b> average</td></tr>
+        <tr><td>membership test <code>key in d</code></td><td>O(n)</td><td><b>O(1)</b> average</td></tr>
+        <tr><td>keep sorted order</td><td>you can</td><td>no (insertion order only)</td></tr>
+      </table>` },
+
+    { type: "html", html: `
+      <h2>3 · Collisions — two keys, one bucket</h2>
+      <p>Different keys can hash to the same slot. The fix used here is <strong>chaining</strong>: each
+      bucket holds a small <em>list of <code>[key, value]</code> pairs</em>. To find a key you hash to
+      the bucket, then linearly scan that short list.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="buckets with chained pairs">
+        <g font-family="monospace" font-size="12">
+          <rect x="20" y="20" width="40" height="28" fill="var(--panel-2)" stroke="var(--line)"/><text x="40" y="39" text-anchor="middle" fill="var(--ink-soft)">0</text>
+          <rect x="20" y="48" width="40" height="28" fill="var(--panel-2)" stroke="var(--line)"/><text x="40" y="67" text-anchor="middle" fill="var(--ink-soft)">1</text>
+          <rect x="20" y="76" width="40" height="28" fill="var(--panel-2)" stroke="var(--line)"/><text x="40" y="95" text-anchor="middle" fill="var(--ink-soft)">2</text>
+          <rect x="20" y="104" width="40" height="28" fill="var(--panel-2)" stroke="var(--line)"/><text x="40" y="123" text-anchor="middle" fill="var(--ink-soft)">3</text>
+        </g>
+        <line x1="60" y1="62" x2="100" y2="62" stroke="var(--accent)"/>
+        <rect x="100" y="48" width="130" height="28" rx="6" fill="var(--box)" stroke="var(--box-line)"/>
+        <text x="165" y="67" text-anchor="middle" font-size="11" font-family="monospace" fill="var(--ink)">["cat", 9]</text>
+        <line x1="230" y1="62" x2="260" y2="62" stroke="var(--accent)"/>
+        <rect x="260" y="48" width="130" height="28" rx="6" fill="var(--box)" stroke="var(--box-line)"/>
+        <text x="325" y="67" text-anchor="middle" font-size="11" font-family="monospace" fill="var(--ink)">["dog", 4]</text>
+        <text x="420" y="67" font-size="11" fill="var(--ink-soft)">both hashed to bucket 1 &rarr; scan this short chain</text>
+        <line x1="60" y1="118" x2="100" y2="118" stroke="var(--accent)"/>
+        <rect x="100" y="104" width="130" height="28" rx="6" fill="var(--box)" stroke="var(--box-line)"/>
+        <text x="165" y="123" text-anchor="middle" font-size="11" font-family="monospace" fill="var(--ink)">["fish", 7]</text>
+      </svg>`, `A good hash spreads keys out so chains stay tiny — then a scan of "a few" is effectively O(1).`)}
+      <h2>4 · Build a mini hashmap</h2>
+      <p><code>buckets</code> is a list of lists. <code>put</code> replaces the value if the key is
+      already in its bucket, otherwise appends a new pair. <code>get</code> hashes, then scans.</p>` },
+    { type: "code", title: "put and get from scratch", code: `def new_map(n=8):
+    buckets = []
+    for _ in range(n):
+        buckets.append([])
+    return buckets
+
+def _index(buckets, key):
+    return simple_hash(key) % len(buckets)
+
+def put(buckets, key, value):
+    chain = buckets[_index(buckets, key)]
+    for pair in chain:
+        if pair[0] == key:
+            pair[1] = value          # update
+            return
+    chain.append([key, value])       # insert
+
+def get(buckets, key):
+    chain = buckets[_index(buckets, key)]
+    for pair in chain:
+        if pair[0] == key:
+            return pair[1]
+    return None
+
+m = new_map()
+put(m, "apples", 5)
+put(m, "pears", 2)
+put(m, "apples", 6)     # update, not a second entry
+print(get(m, "apples"), get(m, "pears"), get(m, "bananas"))` },
+    { type: "html", html: whatif([
+      "two different keys hash to the same bucket — does <code>get</code> still return the right value?",
+      "you <code>put</code> the same key twice with different values — one entry or two?",
+      "<code>n</code> is 1 (a single bucket) — does it still work? What's the lookup speed then?",
+      "a key isn't in the map at all — what does <code>get</code> return?",
+    ]) },
+    { type: "html", html: `
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li>Hashmap = hash function + array of buckets. <code>index = hash(key) % n</code>.</li>
+        <li>Python's <code>dict</code> is a hashmap: <code>d[k]</code>, <code>k in d</code>, <code>.get</code> are O(1) average.</li>
+        <li>Collisions are handled by <strong>chaining</strong> — a short list of <code>[key, value]</code> per bucket.</li>
+        <li>Reach for a dict whenever you'd otherwise <em>search a list to match a key</em>.</li>
+        <li><code>hash(x)</code> and <code>ord(ch)</code> are the built-ins used here.</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Python Tutorial — Dictionaries", url: "https://docs.python.org/3/tutorial/datastructures.html#dictionaries" },
+    { label: "Python docs — hash()", url: "https://docs.python.org/3/library/functions.html#hash" },
+    { label: "Wikipedia — Hash table", url: "https://en.wikipedia.org/wiki/Hash_table" },
+  ],
+  exercises: [
+    {
+      title: "Phonebook",
+      tier: "warm", uses: ["dict (L8)"],
+      prompt: `<p>Build <code>book = {"Ada": 111, "Bo": 222}</code>. Add <code>"Cy": 333</code>, then print
+        Bo's number and whether <code>"Dan"</code> is in the book.</p><pre>222 False</pre>`,
+      starter: `book = {"Ada": 111, "Bo": 222}\n`,
+      solution: `book = {"Ada": 111, "Bo": 222}\nbook["Cy"] = 333\nprint(book["Bo"], "Dan" in book)`,
+      success: "A dict IS a hashmap — this is the O(1) lookup you're studying.",
+      tests: [{ expect: "222 False" }],
+    },
+    {
+      title: "simple_hash(s)",
+      tier: "warm", uses: ["ord()", "loop over string (L6)", "accumulator (L6)"],
+      prompt: `<p>Define <code>simple_hash(s)</code> returning the sum of <code>ord(ch)</code> over every
+        character.</p>`,
+      solution: `def simple_hash(s):\n    total = 0\n    for ch in s:\n        total += ord(ch)\n    return total`,
+      success: "A tiny deterministic hash — real ones mix the bits far more.",
+      mustDefine: ["simple_hash"],
+      tests: [
+        { append: `print(simple_hash("abc"))`, expect: "294" },
+        { append: `print(simple_hash(""))`, expect: "0" },
+        { append: `print(simple_hash("A"))`, expect: "65" },
+      ],
+    },
+    {
+      title: "bucket_index(key, n)",
+      tier: "core", uses: ["simple_hash", "% operator (L3)"],
+      prompt: `<p>Define <code>bucket_index(key, n)</code> returning <code>simple_hash(key) % n</code>.
+        Assume <code>simple_hash</code> from the previous exercise is available (it's included below
+        when we test).</p>`,
+      solution: `def bucket_index(key, n):\n    return simple_hash(key) % n`,
+      success: "% folds any hash value into a valid slot 0..n-1.",
+      mustDefine: ["bucket_index"],
+      tests: [
+        { append: `def simple_hash(s):\n    return sum(ord(c) for c in s)\nprint(bucket_index("abc", 8))`, expect: "6" },
+        { append: `def simple_hash(s):\n    return sum(ord(c) for c in s)\nprint(bucket_index("abc", 1))`, expect: "0" },
+      ],
+    },
+    {
+      title: "put(buckets, key, value)",
+      tier: "core", uses: ["list of lists", "loop + if (L5, L6)", "update-or-append"],
+      prompt: `<p>Define <code>put(buckets, key, value)</code>: find the key's chain (using
+        <code>simple_hash(key) % len(buckets)</code>); if a <code>[key, value]</code> pair with that
+        key exists, overwrite its value; otherwise append a new pair. Return nothing.</p>`,
+      solution: `def put(buckets, key, value):\n    chain = buckets[simple_hash(key) % len(buckets)]\n    for pair in chain:\n        if pair[0] == key:\n            pair[1] = value\n            return\n    chain.append([key, value])`,
+      success: "Scan the short chain first — update if found, insert if not.",
+      mustDefine: ["put"],
+      tests: [
+        { append: `def simple_hash(s):\n    return sum(ord(c) for c in s)\nm = [[] for _ in range(4)]\nput(m, "a", 1)\nput(m, "a", 9)\nput(m, "b", 2)\ntotal = 0\nfor ch in m:\n    total += len(ch)\nprint(total)`, expect: "2" },
+      ],
+    },
+    {
+      title: "get(buckets, key)",
+      tier: "core", uses: ["hash to a bucket", "linear scan of a chain", "return None"],
+      prompt: `<p>Define <code>get(buckets, key)</code> returning the stored value for <code>key</code>,
+        or <code>None</code> if it isn't present.</p>`,
+      solution: `def get(buckets, key):\n    chain = buckets[simple_hash(key) % len(buckets)]\n    for pair in chain:\n        if pair[0] == key:\n            return pair[1]\n    return None`,
+      success: "One hash, then a scan of only that bucket.",
+      mustDefine: ["get"],
+      tests: [
+        { append: `def simple_hash(s):\n    return sum(ord(c) for c in s)\nm = [[] for _ in range(4)]\nm[simple_hash("x") % 4].append(["x", 42])\nprint(get(m, "x"), get(m, "y"))`, expect: "42 None" },
+      ],
+    },
+    {
+      title: "Two-sum",
+      tier: "challenge", uses: ["dict for O(1) lookup (L8)", "loop with index (L6)", "return a list"],
+      prompt: `<p>Define <code>two_sum(nums, target)</code> returning a list <code>[i, j]</code> of the two
+        indices whose values add to <code>target</code> (<code>i &lt; j</code>). Use a dict mapping
+        <em>value &rarr; index</em> so each number is checked in O(1). Assume exactly one answer.</p>`,
+      solution: `def two_sum(nums, target):\n    seen = {}\n    for i in range(len(nums)):\n        need = target - nums[i]\n        if need in seen:\n            return [seen[need], i]\n        seen[nums[i]] = i`,
+      success: "For each number, ask the dict 'have I already seen what I need?' — no inner loop.",
+      mustDefine: ["two_sum"],
+      tests: [
+        { append: `print(two_sum([2, 7, 11, 15], 9))`, expect: "[0, 1]" },
+        { append: `print(two_sum([3, 2, 4], 6))`, expect: "[1, 2]" },
+        { append: `print(two_sum([1, 5, 5, 2], 10))`, expect: "[1, 2]" },
+      ],
+      review: [{ pattern: "for .*:\\s*\\n\\s*for ", tip: `That's the O(n\u00b2) double loop. The dict version checks each number once — O(n).` }],
+    },
+    {
+      title: "First non-repeating",
+      tier: "challenge", uses: ["tally dict (L8)", "two passes", "loop over string (L6)"],
+      prompt: `<p>Define <code>first_unique(s)</code> returning the first character in <code>s</code> that
+        appears exactly once, or <code>""</code> if there is none. Pass 1: count. Pass 2: find.</p>`,
+      solution: `def first_unique(s):\n    counts = {}\n    for ch in s:\n        counts[ch] = counts.get(ch, 0) + 1\n    for ch in s:\n        if counts[ch] == 1:\n            return ch\n    return ""`,
+      success: "Counting into a dict makes the second pass O(n) instead of O(n\u00b2).",
+      mustDefine: ["first_unique"],
+      tests: [
+        { append: `print(first_unique("leetcode"))`, expect: "l" },
+        { append: `print(first_unique("aabb"))`, expect: "" },
+        { append: `print(first_unique("swiss"))`, expect: "w" },
+      ],
+    },
+    {
+      title: "Word frequencies with your map",
+      tier: "challenge", uses: ["your put/get", "split() (L4)", "loop (L6)"],
+      prompt: `<p>Define <code>counts(words)</code> that takes a list of words and returns a plain dict of
+        word &rarr; count. (You may just use a normal dict — you've now seen what it's doing inside.)</p>`,
+      solution: `def counts(words):\n    d = {}\n    for w in words:\n        d[w] = d.get(w, 0) + 1\n    return d`,
+      success: "The tally idiom — now you know the O(1) machinery behind d[w].",
+      mustDefine: ["counts"],
+      tests: [
+        { append: `print(counts(["a", "b", "a", "c", "a", "b"]))`, expect: "{'a': 3, 'b': 2, 'c': 1}" },
+        { append: `print(counts([]))`, expect: "{}" },
+      ],
+    },
+    {
+      title: "Group anagrams",
+      tier: "boss", uses: ["dict of lists (L8)", "sorted() on a string", "\"\".join", "loop (L6)"],
+      prompt: `<p>Define <code>group_anagrams(words)</code> returning a dict whose key is the word's
+        letters <strong>sorted and joined</strong> (e.g. <code>"eat" &rarr; "aet"</code>) and whose
+        value is the list of original words with those letters, in input order.</p>
+        <p><code>group_anagrams(["eat", "tea", "tan", "ate", "nat"])</code> &rarr;
+        <code>{'aet': ['eat', 'tea', 'ate'], 'ant': ['tan', 'nat']}</code></p>`,
+      solution: `def group_anagrams(words):\n    groups = {}\n    for w in words:\n        key = "".join(sorted(w))\n        if key not in groups:\n            groups[key] = []\n        groups[key].append(w)\n    return groups`,
+      success: "The sorted-letters string is a perfect hashmap key for 'same letters'.",
+      mustDefine: ["group_anagrams"],
+      tests: [
+        { append: `print(group_anagrams(["eat", "tea", "tan", "ate", "nat"]))`, expect: "{'aet': ['eat', 'tea', 'ate'], 'ant': ['tan', 'nat']}" },
+        { append: `print(group_anagrams([]))`, expect: "{}" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 15 */
+{
+  id: "stacks-queues-heaps",
+  section: "Data Structures & Algorithms",
+  title: "Heaps, Stacks and Queues",
+  summary: "Three access disciplines: last-in-first-out (stack), first-in-first-out (queue), and always-smallest-first (heap).",
+  lead: "Same storage — a list — but different rules about which end you touch. That one rule changes what each is good for.",
+  spiral: ["list.append / pop / [-1] (L7)", "loops (L6)", "if / while (L5, L6)", "// and % for indices (L3)", "functions (L10)", "int() (L9)", "None (L11)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · Stack — Last In, First Out</h2>
+      <p>Like a stack of plates: you add and remove from the <strong>top</strong> only. The last thing
+      you pushed is the first thing you pop. Python's list already is a stack:
+      <code>push</code> = <code>.append(x)</code>, <code>pop</code> = <code>.pop()</code>,
+      <code>peek</code> = <code>a[-1]</code> — all O(1).</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="a stack">
+        <g font-family="monospace" font-size="13">
+          <rect x="60" y="120" width="120" height="30" fill="var(--box)" stroke="var(--box-line)"/><text x="120" y="140" text-anchor="middle" fill="var(--ink)">1  (first in)</text>
+          <rect x="60" y="90" width="120" height="30" fill="var(--box)" stroke="var(--box-line)"/><text x="120" y="110" text-anchor="middle" fill="var(--ink)">2</text>
+          <rect x="60" y="60" width="120" height="30" fill="var(--accent)" stroke="var(--box-line)"/><text x="120" y="80" text-anchor="middle" fill="#fff">3  (top)</text>
+        </g>
+        <text x="210" y="70" font-size="12" font-family="monospace" fill="var(--ink-soft)">push(4) &rarr; goes on top</text>
+        <text x="210" y="90" font-size="12" font-family="monospace" fill="var(--ink-soft)">pop() &rarr; returns 3</text>
+        <text x="210" y="110" font-size="12" font-family="monospace" fill="var(--ink-soft)">peek &rarr; a[-1]</text>
+        <text x="60" y="175" font-size="11" fill="var(--ink-soft)">Uses: undo history, bracket matching, depth-first search, the call stack itself.</text>
+      </svg>`, `Only the top is reachable. That constraint is the whole point.`)}
+    ` },
+    { type: "code", title: "A stack is just a list", code: `stack = []
+stack.append("a")
+stack.append("b")
+stack.append("c")
+print(stack)
+print("peek:", stack[-1])
+print("pop:", stack.pop())
+print(stack)` },
+
+    { type: "html", html: `
+      <h2>2 · Queue — First In, First Out</h2>
+      <p>Like a checkout line: join at the <strong>back</strong>, leave from the <strong>front</strong>.
+      With a list: <code>enqueue</code> = <code>.append(x)</code>, <code>dequeue</code> =
+      <code>.pop(0)</code>. But <code>pop(0)</code> shifts every remaining item — O(n).</p>
+      <div class="warn"><b>For a real queue, use <code>deque</code></b>
+      <code>from collections import deque</code> gives O(1) at <em>both</em> ends
+      (<code>.append</code> / <code>.popleft</code>). We'll use a plain list here to keep it to what
+      you know — just remember <code>pop(0)</code> isn't free.</div>` },
+    { type: "code", title: "A queue with a list", code: `queue = []
+queue.append("first")
+queue.append("second")
+queue.append("third")
+print("serve:", queue.pop(0))
+print("serve:", queue.pop(0))
+print("waiting:", queue)` },
+    { type: "html", html: whatif([
+      "you <code>pop()</code> instead of <code>pop(0)</code> on the queue — LIFO or FIFO?",
+      "the queue holds a million items and you <code>pop(0)</code> — why is that slow?",
+      "a stack and a queue both receive <code>1, 2, 3</code>. In what order does each hand them back?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>3 · Heap — the smallest is always at the front</h2>
+      <p>A <strong>binary heap</strong> keeps a tree's shape inside a flat array. For the item at
+      index <code>i</code>: its children are at <code>2i+1</code> and <code>2i+2</code>, its parent is
+      at <code>(i-1)//2</code>. A <strong>min-heap</strong> keeps every parent
+      <code>&le;</code> its children — so <code>heap[0]</code> is always the minimum.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="binary min-heap as tree and array">
+        <g font-family="monospace" font-size="13">
+          <circle cx="300" cy="30" r="18" fill="var(--accent)" stroke="var(--box-line)"/><text x="300" y="35" text-anchor="middle" fill="#fff">1</text>
+          <circle cx="220" cy="90" r="18" fill="var(--box)" stroke="var(--box-line)"/><text x="220" y="95" text-anchor="middle" fill="var(--ink)">3</text>
+          <circle cx="380" cy="90" r="18" fill="var(--box)" stroke="var(--box-line)"/><text x="380" y="95" text-anchor="middle" fill="var(--ink)">2</text>
+          <circle cx="180" cy="150" r="18" fill="var(--box)" stroke="var(--box-line)"/><text x="180" y="155" text-anchor="middle" fill="var(--ink)">7</text>
+          <circle cx="260" cy="150" r="18" fill="var(--box)" stroke="var(--box-line)"/><text x="260" y="155" text-anchor="middle" fill="var(--ink)">4</text>
+          <circle cx="360" cy="150" r="18" fill="var(--box)" stroke="var(--box-line)"/><text x="360" y="155" text-anchor="middle" fill="var(--ink)">9</text>
+        </g>
+        <line x1="288" y1="44" x2="232" y2="76" stroke="var(--ink-soft)"/><line x1="312" y1="44" x2="368" y2="76" stroke="var(--ink-soft)"/>
+        <line x1="208" y1="104" x2="188" y2="134" stroke="var(--ink-soft)"/><line x1="232" y1="104" x2="252" y2="134" stroke="var(--ink-soft)"/>
+        <line x1="380" y1="108" x2="362" y2="134" stroke="var(--ink-soft)"/>
+        <g font-family="monospace" font-size="12">
+          <rect x="120" y="195" width="46" height="28" fill="var(--accent)" stroke="var(--box-line)"/><text x="143" y="214" text-anchor="middle" fill="#fff">1</text>
+          <rect x="166" y="195" width="46" height="28" fill="var(--box)" stroke="var(--box-line)"/><text x="189" y="214" text-anchor="middle" fill="var(--ink)">3</text>
+          <rect x="212" y="195" width="46" height="28" fill="var(--box)" stroke="var(--box-line)"/><text x="235" y="214" text-anchor="middle" fill="var(--ink)">2</text>
+          <rect x="258" y="195" width="46" height="28" fill="var(--box)" stroke="var(--box-line)"/><text x="281" y="214" text-anchor="middle" fill="var(--ink)">7</text>
+          <rect x="304" y="195" width="46" height="28" fill="var(--box)" stroke="var(--box-line)"/><text x="327" y="214" text-anchor="middle" fill="var(--ink)">4</text>
+          <rect x="350" y="195" width="46" height="28" fill="var(--box)" stroke="var(--box-line)"/><text x="373" y="214" text-anchor="middle" fill="var(--ink)">9</text>
+        </g>
+        <g font-family="monospace" font-size="10" fill="var(--accent)">
+          <text x="143" y="190" text-anchor="middle">0</text><text x="189" y="190" text-anchor="middle">1</text>
+          <text x="235" y="190" text-anchor="middle">2</text><text x="281" y="190" text-anchor="middle">3</text>
+          <text x="327" y="190" text-anchor="middle">4</text><text x="373" y="190" text-anchor="middle">5</text>
+        </g>
+        <text x="430" y="214" font-size="11" fill="var(--ink-soft)">children of i: 2i+1, 2i+2</text>
+      </svg>`, `The tree is imaginary — it's all one array. heap[0] is the smallest; getting it is O(1).`)}
+      <p><strong>push</strong>: append the new value, then <em>bubble up</em> — swap with the parent
+      while it's bigger. <strong>pop-min</strong>: take <code>heap[0]</code>, move the last item to the
+      front, then <em>bubble down</em> — swap with the smaller child while it's out of order. Both are
+      O(log n) because the tree is only that tall.</p>` },
+    { type: "code", title: "A min-heap from scratch", code: `def heap_push(heap, x):
+    heap.append(x)
+    i = len(heap) - 1
+    while i > 0:
+        parent = (i - 1) // 2
+        if heap[parent] <= heap[i]:
+            break
+        heap[i], heap[parent] = heap[parent], heap[i]
+        i = parent
+
+def heap_pop_min(heap):
+    if not heap:
+        return None
+    top = heap[0]
+    last = heap.pop()
+    if heap:
+        heap[0] = last
+        i, n = 0, len(heap)
+        while True:
+            small = i
+            for child in (2*i + 1, 2*i + 2):
+                if child < n and heap[child] < heap[small]:
+                    small = child
+            if small == i:
+                break
+            heap[i], heap[small] = heap[small], heap[i]
+            i = small
+    return top
+
+h = []
+for x in [5, 3, 8, 1, 9, 2]:
+    heap_push(h, x)
+print("min at front:", h[0])
+print("pop order:", heap_pop_min(h), heap_pop_min(h), heap_pop_min(h))` },
+    { type: "html", html: `
+      <div class="predict"><b>Predict first</b>Push <code>5, 3, 8, 1</code> into an empty min-heap.
+      What is <code>heap[0]</code> after each push? What's the first thing <code>heap_pop_min</code>
+      returns?</div>
+      <table class="tbl">
+        <tr><th>Operation</th><th>Stack</th><th>Queue (list)</th><th>Min-heap</th></tr>
+        <tr><td>add</td><td>O(1)</td><td>O(1)</td><td>O(log n)</td></tr>
+        <tr><td>remove the \u201cnext\u201d one</td><td>O(1) (newest)</td><td>O(n) (oldest)</td><td>O(log n) (smallest)</td></tr>
+        <tr><td>look at the \u201cnext\u201d one</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+      </table>
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li><strong>Stack (LIFO)</strong>: list + <code>append</code> / <code>pop</code> / <code>a[-1]</code>. Undo, brackets, DFS.</li>
+        <li><strong>Queue (FIFO)</strong>: <code>append</code> / <code>pop(0)</code> (O(n) with a list; use <code>deque</code> for real). BFS, scheduling.</li>
+        <li><strong>Min-heap</strong>: array where child(i) = <code>2i+1</code>, <code>2i+2</code>; <code>heap[0]</code> is the min. push/pop O(log n).</li>
+        <li>Choose by which item you always need next: newest &rarr; stack, oldest &rarr; queue, smallest &rarr; heap.</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Python docs — heapq (real priority queue)", url: "https://docs.python.org/3/library/heapq.html" },
+    { label: "Python docs — collections.deque", url: "https://docs.python.org/3/library/collections.html#collections.deque" },
+    { label: "Wikipedia — Binary heap", url: "https://en.wikipedia.org/wiki/Binary_heap" },
+  ],
+  exercises: [
+    {
+      title: "Push and pop",
+      tier: "warm", uses: ["list append / pop (L7)"],
+      prompt: `<p>Start with an empty <code>stack</code>. Push <code>10</code>, <code>20</code>,
+        <code>30</code>. Pop once. Print the popped value, then the stack.</p><pre>30\n[10, 20]</pre>`,
+      starter: `stack = []\n`,
+      solution: `stack = []\nstack.append(10)\nstack.append(20)\nstack.append(30)\nprint(stack.pop())\nprint(stack)`,
+      success: "Last in, first out.",
+      tests: [{ expect: "30\n[10, 20]" }],
+    },
+    {
+      title: "Peek, don't take",
+      tier: "warm", uses: ["negative index (L4)"],
+      prompt: `<p>Given <code>stack = [1, 2, 3, 4]</code>, print the top item <em>without</em> removing it,
+        then print the stack (unchanged).</p><pre>4\n[1, 2, 3, 4]</pre>`,
+      starter: `stack = [1, 2, 3, 4]\n`,
+      solution: `stack = [1, 2, 3, 4]\nprint(stack[-1])\nprint(stack)`,
+      success: "a[-1] reads the top; .pop() would remove it.",
+      tests: [{ expect: "4\n[1, 2, 3, 4]" }],
+    },
+    {
+      title: "Queue order",
+      tier: "core", uses: ["append / pop(0)", "build a list (L7)", "loop (L6)"],
+      prompt: `<p>Define <code>serve_all(items)</code>: put every item into a queue, then repeatedly
+        dequeue and collect into a result list. Return that list — it should equal the input order.</p>`,
+      solution: `def serve_all(items):\n    q = []\n    for x in items:\n        q.append(x)\n    out = []\n    while q:\n        out.append(q.pop(0))\n    return out`,
+      success: "FIFO: what goes in first comes out first.",
+      mustDefine: ["serve_all"],
+      tests: [
+        { append: `print(serve_all([1, 2, 3, 4]))`, expect: "[1, 2, 3, 4]" },
+        { append: `print(serve_all([]))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "Reverse with a stack",
+      tier: "core", uses: ["stack push/pop", "loop over string (L6)", "build a string"],
+      prompt: `<p>Define <code>reverse(s)</code> that reverses a string by pushing every character onto a
+        stack and popping them off. (Yes, <code>s[::-1]</code> is shorter — the point is the stack.)</p>`,
+      solution: `def reverse(s):\n    stack = []\n    for ch in s:\n        stack.append(ch)\n    out = ""\n    while stack:\n        out += stack.pop()\n    return out`,
+      success: "Popping a stack gives you everything back in reverse.",
+      mustDefine: ["reverse"],
+      tests: [
+        { append: `print(reverse("stack"))`, expect: "kcats" },
+        { append: `print(reverse(""))`, expect: "" },
+      ],
+      review: [{ pattern: "\\[::-1\\]", tip: `<code>s[::-1]</code> is the real answer — this exercise wanted the stack to build intuition.` }],
+    },
+    {
+      title: "Balanced brackets",
+      tier: "challenge", uses: ["stack", "dict lookup (L8)", "loop + if (L5, L6)", "early return (L10)"],
+      prompt: `<p>Define <code>balanced(s)</code> returning <code>True</code> if every opening bracket in
+        <code>s</code> (<code>(</code> <code>[</code> <code>{</code>) has a matching closer in the right
+        order. Push openers; on a closer, the top of the stack must be its partner.</p>`,
+      solution: `def balanced(s):\n    pairs = {")": "(", "]": "[", "}": "{"}\n    stack = []\n    for ch in s:\n        if ch in "([{":\n            stack.append(ch)\n        elif ch in ")]}":\n            if not stack or stack.pop() != pairs[ch]:\n                return False\n    return not stack`,
+      success: "The stack remembers what still needs closing; it must be empty at the end.",
+      mustDefine: ["balanced"],
+      tests: [
+        { append: `print(balanced("([]{})"), balanced("([)]"), balanced("((("), balanced(""))`, expect: "True False False True" },
+        { append: `print(balanced("a(b)c[d]"), balanced("}"))`, expect: "True False" },
+      ],
+    },
+    {
+      title: "Evaluate postfix (RPN)",
+      tier: "challenge", uses: ["stack", "int() (L9)", "if/elif (L5)", "loop (L6)"],
+      prompt: `<p>Define <code>eval_rpn(tokens)</code>. Tokens are a list of strings: numbers, or one of
+        <code>"+" "-" "*"</code>. Push numbers; on an operator, pop two, apply, push the result.
+        Return the final number. <code>["3","4","+","2","*"]</code> &rarr; <code>14</code>.</p>`,
+      solution: `def eval_rpn(tokens):\n    stack = []\n    for t in tokens:\n        if t == "+":\n            b = stack.pop(); a = stack.pop(); stack.append(a + b)\n        elif t == "-":\n            b = stack.pop(); a = stack.pop(); stack.append(a - b)\n        elif t == "*":\n            b = stack.pop(); a = stack.pop(); stack.append(a * b)\n        else:\n            stack.append(int(t))\n    return stack[0]`,
+      success: "The second value popped is the left operand — order matters for -.",
+      mustDefine: ["eval_rpn"],
+      tests: [
+        { append: `print(eval_rpn(["3", "4", "+", "2", "*"]))`, expect: "14" },
+        { append: `print(eval_rpn(["10", "2", "-"]))`, expect: "8" },
+        { append: `print(eval_rpn(["5"]))`, expect: "5" },
+      ],
+    },
+    {
+      title: "heap_push(heap, x)",
+      tier: "challenge", uses: ["array-as-tree indices", "while + swap (L6)", "// (L3)"],
+      prompt: `<p>Define <code>heap_push(heap, x)</code>: append <code>x</code>, then bubble it up — while
+        it has a parent (<code>(i-1)//2</code>) that is <strong>larger</strong>, swap. Min-heap: keep
+        <code>heap[0]</code> the smallest.</p>`,
+      solution: `def heap_push(heap, x):\n    heap.append(x)\n    i = len(heap) - 1\n    while i > 0:\n        parent = (i - 1) // 2\n        if heap[parent] <= heap[i]:\n            break\n        heap[i], heap[parent] = heap[parent], heap[i]\n        i = parent`,
+      success: "The new value rises until its parent is no bigger than it.",
+      mustDefine: ["heap_push"],
+      tests: [
+        { append: `h = []\nfor x in [5, 3, 8, 1, 9, 2]:\n    heap_push(h, x)\nprint(h[0])`, expect: "1" },
+        { append: `h = []\nfor x in [4, 4, 4]:\n    heap_push(h, x)\nprint(h)`, expect: "[4, 4, 4]" },
+        { append: `h = []\nfor x in [10, 9, 8, 7]:\n    heap_push(h, x)\nprint(h[0], min(h) == h[0])`, expect: "7 True" },
+      ],
+    },
+    {
+      title: "heap_pop_min(heap)",
+      tier: "challenge", uses: ["array-as-tree indices", "bubble down", "while + for over children"],
+      prompt: `<p>Define <code>heap_pop_min(heap)</code> for a min-heap: return <code>None</code> if empty;
+        otherwise save <code>heap[0]</code>, move the last element to the front, bubble it down (swap
+        with the smaller child while a child is smaller), and return the saved value.</p>`,
+      solution: `def heap_pop_min(heap):\n    if not heap:\n        return None\n    top = heap[0]\n    last = heap.pop()\n    if heap:\n        heap[0] = last\n        i, n = 0, len(heap)\n        while True:\n            small = i\n            for child in (2*i + 1, 2*i + 2):\n                if child < n and heap[child] < heap[small]:\n                    small = child\n            if small == i:\n                break\n            heap[i], heap[small] = heap[small], heap[i]\n            i = small\n    return top`,
+      success: "Root out, last item in, sink it until both children are no smaller.",
+      mustDefine: ["heap_pop_min"],
+      tests: [
+        { append: `def heap_push(heap, x):\n    heap.append(x); i = len(heap) - 1\n    while i > 0:\n        p = (i - 1) // 2\n        if heap[p] <= heap[i]: break\n        heap[i], heap[p] = heap[p], heap[i]; i = p\nh = []\nfor x in [5, 3, 8, 1, 9, 2, 7]:\n    heap_push(h, x)\nout = []\nwhile h:\n    out.append(heap_pop_min(h))\nprint(out)`, expect: "[1, 2, 3, 5, 7, 8, 9]" },
+        { append: `print(heap_pop_min([]))`, expect: "None" },
+        { append: `print(heap_pop_min([42]))`, expect: "42" },
+      ],
+    },
+    {
+      title: "heap_sort(nums)",
+      tier: "boss", uses: ["your heap_push + heap_pop_min", "loop (L6)", "functions (L10)"],
+      prompt: `<p>Define <code>heap_sort(nums)</code> returning a new ascending list: push every value into
+        a fresh heap, then pop the min repeatedly. Assume <code>heap_push</code> and
+        <code>heap_pop_min</code> are available.</p>`,
+      solution: `def heap_sort(nums):\n    heap = []\n    for x in nums:\n        heap_push(heap, x)\n    out = []\n    while heap:\n        out.append(heap_pop_min(heap))\n    return out`,
+      success: "Feed everything in, drain smallest-first — that's heapsort, O(n log n).",
+      mustDefine: ["heap_sort"],
+      tests: [
+        { append: `def heap_push(heap, x):\n    heap.append(x); i = len(heap) - 1\n    while i > 0:\n        p = (i - 1) // 2\n        if heap[p] <= heap[i]: break\n        heap[i], heap[p] = heap[p], heap[i]; i = p\ndef heap_pop_min(heap):\n    if not heap: return None\n    top = heap[0]; last = heap.pop()\n    if heap:\n        heap[0] = last; i, n = 0, len(heap)\n        while True:\n            s = i\n            for c in (2*i+1, 2*i+2):\n                if c < n and heap[c] < heap[s]: s = c\n            if s == i: break\n            heap[i], heap[s] = heap[s], heap[i]; i = s\n    return top\nprint(heap_sort([5, 2, 9, 1, 5, 6]))`, expect: "[1, 2, 5, 5, 6, 9]" },
+        { append: `def heap_push(heap, x):\n    heap.append(x); i = len(heap) - 1\n    while i > 0:\n        p = (i - 1) // 2\n        if heap[p] <= heap[i]: break\n        heap[i], heap[p] = heap[p], heap[i]; i = p\ndef heap_pop_min(heap):\n    if not heap: return None\n    top = heap[0]; last = heap.pop()\n    if heap:\n        heap[0] = last; i, n = 0, len(heap)\n        while True:\n            s = i\n            for c in (2*i+1, 2*i+2):\n                if c < n and heap[c] < heap[s]: s = c\n            if s == i: break\n            heap[i], heap[s] = heap[s], heap[i]; i = s\n    return top\nprint(heap_sort([]))`, expect: "[]" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 16 */
+{
+  id: "binary-search-tree",
+  section: "Data Structures & Algorithms",
+  title: "Binary Search Tree",
+  summary: "A tree that keeps values ordered so search, insert, min and max each take one path from root to leaf.",
+  lead: "Take the halving idea behind binary search and freeze it into a structure. Every node splits the remaining values into 'smaller — go left' and 'larger — go right'.",
+  spiral: ["dict nodes with pointers (L13)", "while loops (L6)", "comparisons < == > (L3)", "if / elif (L5)", "stack for traversal (L15)", "functions & return (L10)", "None (L11)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · The ordering rule</h2>
+      <p>A node holds a value and two child pointers, <code>"left"</code> and <code>"right"</code>.
+      The <strong>BST property</strong>: <em>every</em> value in the left subtree is smaller than the
+      node, and <em>every</em> value in the right subtree is larger. That rule, held everywhere, is
+      what makes lookup fast.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="a binary search tree">
+        <g font-family="monospace" font-size="14">
+          <circle cx="300" cy="30" r="20" fill="var(--accent)" stroke="var(--box-line)"/><text x="300" y="35" text-anchor="middle" fill="#fff">8</text>
+          <circle cx="200" cy="95" r="20" fill="var(--box)" stroke="var(--box-line)"/><text x="200" y="100" text-anchor="middle" fill="var(--ink)">3</text>
+          <circle cx="400" cy="95" r="20" fill="var(--box)" stroke="var(--box-line)"/><text x="400" y="100" text-anchor="middle" fill="var(--ink)">10</text>
+          <circle cx="140" cy="165" r="20" fill="var(--box)" stroke="var(--box-line)"/><text x="140" y="170" text-anchor="middle" fill="var(--ink)">1</text>
+          <circle cx="255" cy="165" r="20" fill="var(--box)" stroke="var(--box-line)"/><text x="255" y="170" text-anchor="middle" fill="var(--ink)">6</text>
+          <circle cx="450" cy="165" r="20" fill="var(--box)" stroke="var(--box-line)"/><text x="450" y="170" text-anchor="middle" fill="var(--ink)">14</text>
+        </g>
+        <line x1="286" y1="44" x2="214" y2="81" stroke="var(--ink-soft)"/><line x1="314" y1="44" x2="386" y2="81" stroke="var(--ink-soft)"/>
+        <line x1="188" y1="111" x2="152" y2="149" stroke="var(--ink-soft)"/><line x1="212" y1="111" x2="243" y2="149" stroke="var(--ink-soft)"/>
+        <line x1="410" y1="111" x2="440" y2="149" stroke="var(--ink-soft)"/>
+        <text x="130" y="205" font-size="11" fill="var(--ink-soft)">everything left of 8 is &lt; 8; everything right is &gt; 8 — and the same holds at every node</text>
+      </svg>`, `Search for 6: 6 < 8 go left, 6 > 3 go right, found. Three steps for six values; ~log n for a million.`)}
+      <p>We'll use the same dict-node trick as linked lists:
+      <code>{"val": v, "left": None, "right": None}</code>.</p>` },
+
+    { type: "html", html: `
+      <h2>2 · Search — walk one path down</h2>
+      <p>Start at the root. If <code>target</code> equals the node, done. If it's smaller, go
+      <code>left</code>; if larger, go <code>right</code>. Fall off the bottom (<code>None</code>) and
+      it isn't there. No backtracking — one straight path.</p>` },
+    { type: "code", title: "Iterative search", code: `def bst_search(root, target):
+    node = root
+    while node is not None:
+        if target == node["val"]:
+            return True
+        if target < node["val"]:
+            node = node["left"]
+        else:
+            node = node["right"]
+    return False
+
+root = {"val": 8,
+        "left":  {"val": 3, "left": {"val": 1, "left": None, "right": None},
+                             "right": {"val": 6, "left": None, "right": None}},
+        "right": {"val": 10, "left": None, "right": None}}
+print(bst_search(root, 6), bst_search(root, 7))` },
+
+    { type: "html", html: `
+      <h2>3 · Insert — search, then attach</h2>
+      <p>Walk down exactly like a search. When the direction you want is <code>None</code>, that's
+      where the new node hangs.</p>` },
+    { type: "code", title: "Iterative insert", code: `def bst_insert(root, val):
+    new = {"val": val, "left": None, "right": None}
+    if root is None:
+        return new
+    node = root
+    while True:
+        if val < node["val"]:
+            if node["left"] is None:
+                node["left"] = new
+                return root
+            node = node["left"]
+        else:
+            if node["right"] is None:
+                node["right"] = new
+                return root
+            node = node["right"]
+
+root = None
+for v in [8, 3, 10, 1, 6, 14]:
+    root = bst_insert(root, v)
+print(root["val"], root["left"]["val"], root["right"]["val"])` },
+
+    { type: "html", html: `
+      <h2>4 · Min, max, and sorted order</h2>
+      <p>The <strong>smallest</strong> value is as far <code>left</code> as you can go; the
+      <strong>largest</strong> is as far <code>right</code>. And an <strong>in-order</strong> walk —
+      left subtree, then node, then right subtree — visits values in <em>sorted order</em>. Here it is
+      iteratively, with an explicit stack (Lesson 15). Next lesson, recursion makes it three lines.</p>` },
+    { type: "code", title: "In-order traversal with a stack", code: `def in_order(root):
+    out = []
+    stack = []
+    node = root
+    while stack or node is not None:
+        while node is not None:      # dive left, remembering the way back
+            stack.append(node)
+            node = node["left"]
+        node = stack.pop()           # deepest unvisited node
+        out.append(node["val"])
+        node = node["right"]         # then its right subtree
+    return out
+
+root = None
+for v in [8, 3, 10, 1, 6, 14, 4]:
+    root = bst_insert(root, v)
+print(in_order(root))` },
+    { type: "html", html: whatif([
+      "you insert values <em>already sorted</em> — <code>1, 2, 3, 4, 5</code>. What shape is the tree? How fast is search now?",
+      "you search for a value smaller than everything in the tree — how many steps before you hit <code>None</code>?",
+      "two nodes have the same value — where does the second one go with the insert rule above?",
+      "the tree is one node — what do <code>bst_min</code> and <code>bst_max</code> both return?",
+    ]) },
+    { type: "html", html: `
+      <div class="warn"><b>Balance is everything</b>
+      A BST is O(log n) <em>only if it stays bushy</em>. Feed it sorted data and it degenerates into a
+      linked list — O(n). Real libraries use self-balancing trees (AVL, red-black) that rotate nodes to
+      stay short. The idea is the same; the bookkeeping is more.</div>
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li>Node: <code>{"val", "left", "right"}</code>. BST rule: left subtree &lt; node &lt; right subtree, everywhere.</li>
+        <li>Search / insert: one path from root down, choosing left/right by comparison — O(height).</li>
+        <li>Min = leftmost, max = rightmost.</li>
+        <li>In-order traversal (left, node, right) yields <strong>sorted</strong> values.</li>
+        <li>Height is O(log n) only when balanced; sorted inserts make it O(n).</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Wikipedia — Binary search tree", url: "https://en.wikipedia.org/wiki/Binary_search_tree" },
+    { label: "CS50 — Data Structures (trees)", url: "https://cs50.harvard.edu/x/notes/5/" },
+    { label: "Python docs — bisect (arrays kept sorted)", url: "https://docs.python.org/3/library/bisect.html" },
+  ],
+  exercises: [
+    {
+      title: "Build three nodes",
+      tier: "warm", uses: ["dict nodes (L13)"],
+      prompt: `<p>By hand, build this tiny BST — root <code>5</code>, left child <code>2</code>, right child
+        <code>9</code> — as nested dicts in a variable <code>root</code>. Print
+        <code>root["val"] root["left"]["val"] root["right"]["val"]</code>.</p><pre>5 2 9</pre>`,
+      solution: `root = {"val": 5, "left": {"val": 2, "left": None, "right": None}, "right": {"val": 9, "left": None, "right": None}}\nprint(root["val"], root["left"]["val"], root["right"]["val"])`,
+      success: "Every node has exactly the three keys, leaves included.",
+      tests: [{ expect: "5 2 9" }],
+    },
+    {
+      title: "Which way?",
+      tier: "warm", uses: ["comparisons (L3)", "dict access (L8)"],
+      prompt: `<p>Given the starter <code>root</code> and <code>target = 7</code>, print <code>left</code>
+        or <code>right</code> — the direction you'd step from the root to look for <code>target</code>.</p>
+        <pre>right</pre>`,
+      starter: `root = {"val": 5, "left": None, "right": None}\ntarget = 7\n`,
+      solution: `root = {"val": 5, "left": None, "right": None}\ntarget = 7\nif target < root["val"]:\n    print("left")\nelse:\n    print("right")`,
+      success: "Smaller → left, bigger → right. That single comparison is the whole search step.",
+      tests: [
+        { expect: "right" },
+        { advisory: true, rewrite: [["^target\\s*=\\s*\\d+\\s*$", "target = 2"]], expect: "left", why: `2 is smaller than 5 → left.` },
+      ],
+    },
+    {
+      title: "bst_search(root, target)",
+      tier: "core", uses: ["while loop (L6)", "if/elif (L5)", "walk left/right"],
+      prompt: `<p>Define <code>bst_search(root, target)</code> returning <code>True</code>/<code>False</code>,
+        iteratively (no recursion yet).</p>`,
+      solution: `def bst_search(root, target):\n    node = root\n    while node is not None:\n        if target == node["val"]:\n            return True\n        if target < node["val"]:\n            node = node["left"]\n        else:\n            node = node["right"]\n    return False`,
+      success: "One path down; fall off the bottom and it's absent.",
+      mustDefine: ["bst_search"],
+      tests: [
+        { append: `r = {"val": 8, "left": {"val": 3, "left": {"val": 1, "left": None, "right": None}, "right": {"val": 6, "left": None, "right": None}}, "right": {"val": 10, "left": None, "right": None}}\nprint(bst_search(r, 6), bst_search(r, 1), bst_search(r, 7), bst_search(r, 8))`, expect: "True True False True" },
+        { append: `print(bst_search(None, 5))`, expect: "False" },
+      ],
+    },
+    {
+      title: "bst_insert(root, val)",
+      tier: "core", uses: ["while loop", "if/elif", "create a node", "return root"],
+      prompt: `<p>Define <code>bst_insert(root, val)</code> that inserts a new node and returns the (possibly
+        new) root. Values equal or greater go right.</p>`,
+      solution: `def bst_insert(root, val):\n    new = {"val": val, "left": None, "right": None}\n    if root is None:\n        return new\n    node = root\n    while True:\n        if val < node["val"]:\n            if node["left"] is None:\n                node["left"] = new\n                return root\n            node = node["left"]\n        else:\n            if node["right"] is None:\n                node["right"] = new\n                return root\n            node = node["right"]`,
+      success: "Walk like a search; attach where the branch is None.",
+      mustDefine: ["bst_insert"],
+      tests: [
+        { append: `r = None\nfor v in [8, 3, 10, 1, 6, 14]:\n    r = bst_insert(r, v)\nprint(r["val"], r["left"]["val"], r["right"]["val"], r["left"]["right"]["val"])`, expect: "8 3 10 6" },
+        { append: `r = bst_insert(None, 42)\nprint(r["val"], r["left"], r["right"])`, expect: "42 None None" },
+      ],
+    },
+    {
+      title: "bst_min(root) & bst_max(root)",
+      tier: "core", uses: ["while walking one direction", "functions (L10)"],
+      prompt: `<p>Define <code>bst_min(root)</code> (walk <code>left</code> to the end) and
+        <code>bst_max(root)</code> (walk <code>right</code>). Return the value, or <code>None</code>
+        for an empty tree.</p>`,
+      solution: `def bst_min(root):\n    if root is None:\n        return None\n    node = root\n    while node["left"] is not None:\n        node = node["left"]\n    return node["val"]\n\ndef bst_max(root):\n    if root is None:\n        return None\n    node = root\n    while node["right"] is not None:\n        node = node["right"]\n    return node["val"]`,
+      success: "Extremes live at the ends of the leftmost / rightmost path.",
+      mustDefine: ["bst_min", "bst_max"],
+      tests: [
+        { append: `def ins(root, v):\n    n = {"val": v, "left": None, "right": None}\n    if root is None: return n\n    cur = root\n    while True:\n        if v < cur["val"]:\n            if cur["left"] is None: cur["left"] = n; return root\n            cur = cur["left"]\n        else:\n            if cur["right"] is None: cur["right"] = n; return root\n            cur = cur["right"]\nr = None\nfor v in [8, 3, 10, 1, 6, 14]:\n    r = ins(r, v)\nprint(bst_min(r), bst_max(r))`, expect: "1 14" },
+        { append: `print(bst_min(None), bst_max(None))`, expect: "None None" },
+      ],
+    },
+    {
+      title: "in_order(root)",
+      tier: "challenge", uses: ["explicit stack (L15)", "while loop", "build a list (L7)"],
+      prompt: `<p>Define <code>in_order(root)</code> returning a list of all values in <strong>sorted</strong>
+        order, using an explicit stack (left, node, right). No recursion yet.</p>`,
+      solution: `def in_order(root):\n    out = []\n    stack = []\n    node = root\n    while stack or node is not None:\n        while node is not None:\n            stack.append(node)\n            node = node["left"]\n        node = stack.pop()\n        out.append(node["val"])\n        node = node["right"]\n    return out`,
+      success: "Dive left pushing as you go; pop, record, then turn right.",
+      mustDefine: ["in_order"],
+      tests: [
+        { append: `def ins(root, v):\n    n = {"val": v, "left": None, "right": None}\n    if root is None: return n\n    cur = root\n    while True:\n        if v < cur["val"]:\n            if cur["left"] is None: cur["left"] = n; return root\n            cur = cur["left"]\n        else:\n            if cur["right"] is None: cur["right"] = n; return root\n            cur = cur["right"]\nr = None\nfor v in [8, 3, 10, 1, 6, 14, 4, 7, 13]:\n    r = ins(r, v)\nprint(in_order(r))`, expect: "[1, 3, 4, 6, 7, 8, 10, 13, 14]" },
+        { append: `print(in_order(None))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "is_bst(root)",
+      tier: "challenge", uses: ["in_order", "loop + comparison (L6, L3)", "early return"],
+      prompt: `<p>Define <code>is_bst(root)</code> returning <code>True</code> if the tree obeys the BST
+        rule. Easiest check: an in-order traversal must come out <strong>strictly ascending</strong>.
+        (Assume <code>in_order</code> from the previous exercise is available; a copy is included when
+        we test.)</p>`,
+      solution: `def is_bst(root):\n    vals = in_order(root)\n    for i in range(1, len(vals)):\n        if vals[i] <= vals[i - 1]:\n            return False\n    return True`,
+      success: "In-order sorted ⇔ valid BST. Reuse, don't re-derive.",
+      mustDefine: ["is_bst"],
+      tests: [
+        { append: `def in_order(root):\n    out, st, node = [], [], root\n    while st or node is not None:\n        while node is not None:\n            st.append(node); node = node["left"]\n        node = st.pop(); out.append(node["val"]); node = node["right"]\n    return out\ngood = {"val": 5, "left": {"val": 3, "left": None, "right": None}, "right": {"val": 8, "left": None, "right": None}}\nbad  = {"val": 5, "left": {"val": 3, "left": None, "right": None}, "right": {"val": 4, "left": None, "right": None}}\nprint(is_bst(good), is_bst(bad), is_bst(None))`, expect: "True False True" },
+      ],
+    },
+    {
+      title: "range_sum(root, lo, hi)",
+      tier: "boss", uses: ["stack traversal (L15)", "BST pruning", "if + comparison (L5, L3)", "accumulator (L6)"],
+      prompt: `<p>Define <code>range_sum(root, lo, hi)</code> — the sum of every value <code>v</code> with
+        <code>lo &le; v &le; hi</code>. Use the BST rule to <strong>prune</strong>: don't descend
+        <code>left</code> when the node is already <code>&le; lo</code>, don't descend <code>right</code>
+        when it's <code>&ge; hi</code>.</p>`,
+      solution: `def range_sum(root, lo, hi):\n    total = 0\n    stack = [root]\n    while stack:\n        node = stack.pop()\n        if node is None:\n            continue\n        if lo <= node["val"] <= hi:\n            total += node["val"]\n        if node["val"] > lo:\n            stack.append(node["left"])\n        if node["val"] < hi:\n            stack.append(node["right"])\n    return total`,
+      success: "The ordering lets you skip whole subtrees that can't contain an in-range value.",
+      mustDefine: ["range_sum"],
+      tests: [
+        { append: `def ins(root, v):\n    n = {"val": v, "left": None, "right": None}\n    if root is None: return n\n    cur = root\n    while True:\n        if v < cur["val"]:\n            if cur["left"] is None: cur["left"] = n; return root\n            cur = cur["left"]\n        else:\n            if cur["right"] is None: cur["right"] = n; return root\n            cur = cur["right"]\nr = None\nfor v in [10, 5, 15, 3, 7, 13, 18, 1]:\n    r = ins(r, v)\nprint(range_sum(r, 7, 15))`, expect: "45" },
+        { append: `print(range_sum(None, 0, 100))`, expect: "0" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 17 */
+{
+  id: "recursion",
+  section: "Data Structures & Algorithms",
+  title: "Recursion",
+  summary: "A function that solves a problem by calling itself on a smaller piece — a base case to stop, a recursive case to shrink.",
+  lead: "Some problems are self-similar: a tree is a node with two smaller trees; a list is a head plus a smaller list. Recursion lets your code mirror that shape exactly.",
+  spiral: ["functions & return (L10)", "if / else for the base case (L5)", "the call stack (L15)", "lists & slicing (L4, L7)", "dict for memoisation (L8, L14)", "BST nodes left/right (L16)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · Two parts, always</h2>
+      <p>A recursive function has:</p>
+      <ul>
+        <li>a <strong>base case</strong> — a version so small you answer it directly, no more calls;</li>
+        <li>a <strong>recursive case</strong> — call yourself on something <em>smaller</em>, then combine
+        that answer with the current step.</li>
+      </ul>
+      <p>Miss the base case (or never reach it) and the calls never stop —
+      Python bails out with <code>RecursionError</code> after ~1000 nested calls.</p>` },
+    { type: "code", title: "The classic: factorial", code: `def factorial(n):
+    if n <= 1:            # base case
+        return 1
+    return n * factorial(n - 1)   # recursive case: smaller n
+
+print(factorial(5))` },
+    { type: "html", html: `
+      ${fig(`
+      <svg class="ill" viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="factorial call stack building and unwinding">
+        <g font-family="monospace" font-size="12">
+          <rect x="40" y="20" width="220" height="26" fill="var(--box)" stroke="var(--box-line)"/><text x="50" y="38" fill="var(--ink)">factorial(3) = 3 * factorial(2)</text>
+          <rect x="60" y="52" width="220" height="26" fill="var(--box)" stroke="var(--box-line)"/><text x="70" y="70" fill="var(--ink)">factorial(2) = 2 * factorial(1)</text>
+          <rect x="80" y="84" width="220" height="26" fill="var(--accent)" stroke="var(--box-line)"/><text x="90" y="102" fill="#fff">factorial(1) = 1   (base case)</text>
+        </g>
+        <text x="330" y="40" font-size="11" fill="var(--ink-soft)">calls pile up (pushed on the call stack)</text>
+        <g font-family="monospace" font-size="12">
+          <text x="80" y="150" fill="var(--ink-soft)">&rarr; returns 1</text>
+          <text x="60" y="172" fill="var(--ink-soft)">&rarr; 2 * 1 = 2</text>
+          <text x="40" y="194" fill="var(--ink-soft)">&rarr; 3 * 2 = 6</text>
+        </g>
+        <text x="330" y="172" font-size="11" fill="var(--ink-soft)">then they unwind, each multiplying on the way out</text>
+      </svg>`, `Every call waits, holding its "n", until the one below it returns. The call stack from Lesson 15 — Python's own.`)}
+      <div class="predict"><b>Predict first</b>How many times is <code>factorial</code> called for
+      <code>factorial(4)</code>? What's the deepest the stack gets?</div>` },
+
+    { type: "html", html: `
+      <h2>2 · Recursion on a list</h2>
+      <p>A list is <em>the first item</em> plus <em>a smaller list</em>. So "sum a list" is
+      "first item + sum of the rest".</p>` },
+    { type: "code", title: "Sum by shrinking", code: `def sum_list(nums):
+    if not nums:              # base case: empty list
+        return 0
+    return nums[0] + sum_list(nums[1:])   # first + sum of the rest
+
+print(sum_list([4, 8, 15, 16, 23, 42]))` },
+    { type: "html", html: whatif([
+      "you remove the <code>if not nums:</code> base case — what error, and roughly after how many calls?",
+      "the base case is <code>if len(nums) == 5:</code> instead — does it ever trigger for a 3-item list?",
+      "the list has a million items — is deep recursion a good fit here, or would a loop be safer?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>3 · Where recursion truly shines: trees</h2>
+      <p>A binary tree <em>is</em> a node with a smaller left tree and a smaller right tree. The
+      iterative traversals from Lesson 16 needed an explicit stack. Recursively they're almost the
+      definition read aloud:</p>` },
+    { type: "code", title: "Tree traversal, three lines", code: `def in_order(node):
+    if node is None:                 # base case: empty subtree
+        return []
+    return in_order(node["left"]) + [node["val"]] + in_order(node["right"])
+
+def tree_sum(node):
+    if node is None:
+        return 0
+    return node["val"] + tree_sum(node["left"]) + tree_sum(node["right"])
+
+root = {"val": 8,
+        "left":  {"val": 3, "left": {"val": 1, "left": None, "right": None},
+                             "right": {"val": 6, "left": None, "right": None}},
+        "right": {"val": 10, "left": None, "right": None}}
+print(in_order(root))
+print(tree_sum(root))` },
+
+    { type: "html", html: `
+      <h2>4 · When recursion is slow — and the fix</h2>
+      <p>Naive Fibonacci recomputes the same values a mind-boggling number of times —
+      <code>fib(n)</code> makes about <code>2ⁿ</code> calls. <strong>Memoisation</strong>: cache each
+      answer in a dict (Lesson 8) so it's computed once. That drops it to O(n).</p>` },
+    { type: "code", title: "Slow, then fast", code: `def fib_slow(n):
+    if n < 2:
+        return n
+    return fib_slow(n - 1) + fib_slow(n - 2)
+
+def fib_fast(n, memo=None):
+    if memo is None:
+        memo = {}
+    if n < 2:
+        return n
+    if n not in memo:
+        memo[n] = fib_fast(n - 1, memo) + fib_fast(n - 2, memo)
+    return memo[n]
+
+print(fib_slow(20))
+print(fib_fast(60))     # try fib_slow(60) and you'll be waiting a long time` },
+    { type: "html", html: `
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li>Base case stops; recursive case calls itself on something <strong>smaller</strong>, then combines.</li>
+        <li>Each call sits on the call stack until the calls below it return — depth is limited (~1000).</li>
+        <li>Self-similar data (trees, nested lists, linked lists) maps directly onto recursion.</li>
+        <li>Repeated subproblems? Cache them in a dict — <strong>memoisation</strong> — to avoid re-computing.</li>
+        <li>A loop is often fine too; use recursion when it makes the code match the structure.</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Python Tutorial — Defining Functions (recursion follows naturally)", url: "https://docs.python.org/3/tutorial/controlflow.html#defining-functions" },
+    { label: "Real Python — Recursion in Python", url: "https://realpython.com/python-recursion/" },
+    { label: "CS50x — Algorithms (recursion)", url: "https://cs50.harvard.edu/x/notes/3/" },
+  ],
+  exercises: [
+    {
+      title: "Countdown",
+      tier: "warm", uses: ["base case + recursive call", "print (L1)"],
+      prompt: `<p>Define <code>countdown(n)</code> that prints <code>n, n-1, … 1</code> one per line, then
+        <code>go</code> — using recursion, no loop.</p>`,
+      solution: `def countdown(n):\n    if n <= 0:\n        print("go")\n        return\n    print(n)\n    countdown(n - 1)`,
+      success: "Print, then hand the smaller problem to yourself.",
+      mustDefine: ["countdown"],
+      forbid: [{ pattern: "\\bfor\\b|\\bwhile\\b", tip: `A loop works — this one is for practising recursion.` }],
+      tests: [
+        { append: `countdown(3)`, expect: "3\n2\n1\ngo" },
+        { append: `countdown(0)`, expect: "go" },
+      ],
+    },
+    {
+      title: "factorial(n)",
+      tier: "warm", uses: ["base case", "multiply on the way out"],
+      prompt: `<p>Define <code>factorial(n)</code> recursively. <code>factorial(0)</code> and
+        <code>factorial(1)</code> are <code>1</code>.</p>`,
+      solution: `def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)`,
+      success: "n! = n × (n-1)!",
+      mustDefine: ["factorial"],
+      tests: [
+        { append: `print(factorial(5), factorial(0), factorial(1))`, expect: "120 1 1" },
+      ],
+    },
+    {
+      title: "sum_list(nums)",
+      tier: "core", uses: ["slicing nums[1:] (L4)", "empty-list base case"],
+      prompt: `<p>Define <code>sum_list(nums)</code> recursively: first element plus the sum of the rest.
+        Empty list &rarr; <code>0</code>.</p>`,
+      solution: `def sum_list(nums):\n    if not nums:\n        return 0\n    return nums[0] + sum_list(nums[1:])`,
+      success: "nums[1:] is 'the rest' — one item smaller each call.",
+      mustDefine: ["sum_list"],
+      forbid: [{ pattern: "\\bfor\\b|\\bwhile\\b|sum\\(", tip: `<code>sum(nums)</code> is the real answer — recurse here for the practice.` }],
+      tests: [
+        { append: `print(sum_list([4, 8, 15, 16, 23, 42]))`, expect: "108" },
+        { append: `print(sum_list([]))`, expect: "0" },
+      ],
+    },
+    {
+      title: "power(base, exp)",
+      tier: "core", uses: ["base case exp == 0", "multiply down"],
+      prompt: `<p>Define <code>power(base, exp)</code> for a non-negative integer <code>exp</code>, recursively
+        (no <code>**</code>). <code>power(b, 0)</code> is <code>1</code>.</p>`,
+      solution: `def power(base, exp):\n    if exp == 0:\n        return 1\n    return base * power(base, exp - 1)`,
+      success: "b^e = b × b^(e-1).",
+      mustDefine: ["power"],
+      forbid: [{ pattern: "\\*\\*|pow\\(", tip: `<code>base ** exp</code> is the real answer — this practises recursion.` }],
+      tests: [
+        { append: `print(power(2, 10), power(5, 0), power(7, 1))`, expect: "1024 1 7" },
+      ],
+    },
+    {
+      title: "reverse(s)",
+      tier: "core", uses: ["slicing (L4)", "string base case"],
+      prompt: `<p>Define <code>reverse(s)</code> recursively: the reverse of a string is
+        <em>reverse(everything after the first char) + first char</em>. Empty &rarr; empty.</p>`,
+      solution: `def reverse(s):\n    if s == "":\n        return ""\n    return reverse(s[1:]) + s[0]`,
+      success: "Peel off the front, reverse the rest, stick the front on the end.",
+      mustDefine: ["reverse"],
+      forbid: [{ pattern: "\\[::-1\\]|\\bfor\\b|\\bwhile\\b", tip: `<code>s[::-1]</code> is the real answer — recursion practice here.` }],
+      tests: [
+        { append: `print(reverse("recursion"))`, expect: "noisrucer" },
+        { append: `print(reverse(""))`, expect: "" },
+      ],
+    },
+    {
+      title: "list_length(head)",
+      tier: "core", uses: ["linked-list nodes (L13)", "None base case"],
+      prompt: `<p>Define <code>list_length(head)</code> for a linked list of
+        <code>{"val", "next"}</code> nodes, recursively: <code>0</code> if <code>head is None</code>,
+        otherwise <code>1 + list_length(head["next"])</code>.</p>`,
+      solution: `def list_length(head):\n    if head is None:\n        return 0\n    return 1 + list_length(head["next"])`,
+      success: "The list's length is 1 plus the tail's length.",
+      mustDefine: ["list_length"],
+      tests: [
+        { append: `print(list_length({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "3" },
+        { append: `print(list_length(None))`, expect: "0" },
+      ],
+    },
+    {
+      title: "tree_height(root)",
+      tier: "challenge", uses: ["BST nodes (L16)", "max (built-in)", "None base case"],
+      prompt: `<p>Define <code>tree_height(root)</code>: <code>0</code> for an empty tree, otherwise
+        <code>1 + max(height of left, height of right)</code>.</p>`,
+      solution: `def tree_height(root):\n    if root is None:\n        return 0\n    return 1 + max(tree_height(root["left"]), tree_height(root["right"]))`,
+      success: "A tree's height is one more than its taller subtree.",
+      mustDefine: ["tree_height"],
+      tests: [
+        { append: `r = {"val": 8, "left": {"val": 3, "left": {"val": 1, "left": None, "right": None}, "right": None}, "right": {"val": 10, "left": None, "right": None}}\nprint(tree_height(r))`, expect: "3" },
+        { append: `print(tree_height(None), tree_height({"val": 1, "left": None, "right": None}))`, expect: "0 1" },
+      ],
+    },
+    {
+      title: "in_order(root)",
+      tier: "challenge", uses: ["BST nodes (L16)", "list concatenation (L7)", "compare to L16's stack version"],
+      prompt: `<p>Define <code>in_order(root)</code> returning the sorted list of values — recursively this
+        time: <code>in_order(left) + [val] + in_order(right)</code>. Empty &rarr; <code>[]</code>.</p>`,
+      solution: `def in_order(root):\n    if root is None:\n        return []\n    return in_order(root["left"]) + [root["val"]] + in_order(root["right"])`,
+      success: "Three lines vs the stack machinery — recursion matches the tree's shape.",
+      mustDefine: ["in_order"],
+      forbid: [{ pattern: "\\bwhile\\b|\\bstack\\b", tip: `You built the iterative version in Lesson 16 — this one's about the recursive elegance.` }],
+      tests: [
+        { append: `def ins(root, v):\n    n = {"val": v, "left": None, "right": None}\n    if root is None: return n\n    c = root\n    while True:\n        if v < c["val"]:\n            if c["left"] is None: c["left"] = n; return root\n            c = c["left"]\n        else:\n            if c["right"] is None: c["right"] = n; return root\n            c = c["right"]\nr = None\nfor v in [8, 3, 10, 1, 6, 14, 4]:\n    r = ins(r, v)\nprint(in_order(r))`, expect: "[1, 3, 4, 6, 8, 10, 14]" },
+        { append: `print(in_order(None))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "fib(n) — memoised",
+      tier: "challenge", uses: ["recursion", "dict cache (L8, L14)", "default parameter (L10)"],
+      prompt: `<p>Define <code>fib(n)</code> — the nth Fibonacci number (<code>fib(0)=0</code>,
+        <code>fib(1)=1</code>) — using a dict to <strong>memoise</strong> so <code>fib(50)</code> is
+        instant. Signature: <code>def fib(n, memo=None):</code>.</p>`,
+      solution: `def fib(n, memo=None):\n    if memo is None:\n        memo = {}\n    if n < 2:\n        return n\n    if n not in memo:\n        memo[n] = fib(n - 1, memo) + fib(n - 2, memo)\n    return memo[n]`,
+      success: "Cache before you recurse deeper — each fib(k) is computed once.",
+      mustDefine: ["fib"],
+      tests: [
+        { append: `print(fib(10), fib(20), fib(50))`, expect: "55 6765 12586269025" },
+        { append: `print(fib(0), fib(1), fib(2))`, expect: "0 1 1" },
+      ],
+    },
+    {
+      title: "flatten(items)",
+      tier: "boss", uses: ["recursion on nested structure", "type(x) is list (L2)", "build a list (L7)", "loop (L6)"],
+      prompt: `<p>Define <code>flatten(items)</code>: given a list that may contain other lists (nested to
+        any depth), return a single flat list of all the non-list values, left to right.
+        <code>flatten([1, [2, [3, 4]], 5])</code> &rarr; <code>[1, 2, 3, 4, 5]</code>. Use
+        <code>type(x) is list</code> to test each element.</p>`,
+      solution: `def flatten(items):\n    out = []\n    for x in items:\n        if type(x) is list:\n            out += flatten(x)\n        else:\n            out.append(x)\n    return out`,
+      success: "A list element that is itself a list → recurse into it and splice the result in.",
+      mustDefine: ["flatten"],
+      tests: [
+        { append: `print(flatten([1, [2, [3, 4]], 5]))`, expect: "[1, 2, 3, 4, 5]" },
+        { append: `print(flatten([[[[7]]]]))`, expect: "[7]" },
+        { append: `print(flatten([]))`, expect: "[]" },
+        { append: `print(flatten([1, [], [2, [], [3]]]))`, expect: "[1, 2, 3]" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 18 */
+{
+  id: "sorting-algorithms",
+  section: "Data Structures & Algorithms",
+  title: "Sorting Algorithms",
+  summary: "Five ways to put a list in order — the O(n²) trio (bubble, selection, insertion) and the O(n log n) pair (merge, quick).",
+  lead: "Sorting is the classic lens on algorithm design: same result, wildly different speed. Build them by hand and you'll feel why n log n beats n squared.",
+  spiral: ["loops & nested loops (L6)", "list indexing & swap (L7)", "comparisons (L3)", "functions & return (L10)", "recursion: split / combine (L17)", "the 'best so far' scan (L6)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · Vocabulary</h2>
+      <ul>
+        <li><strong>In-place</strong>: rearranges the given list using O(1) extra memory (bubble,
+        selection, insertion, quick). <strong>Out-of-place</strong>: builds a new list (merge).</li>
+        <li><strong>Stable</strong>: equal items keep their original relative order (merge, insertion;
+        <em>not</em> selection or plain quick).</li>
+        <li>Any sort that only <em>compares</em> pairs needs at least about <strong>n log n</strong>
+        comparisons in the worst case — you can't beat that by being clever with comparisons alone.</li>
+      </ul>` },
+
+    { type: "html", html: `
+      <h2>2 · Bubble sort — O(n²)</h2>
+      <p>Walk the list comparing each pair of neighbours; swap them if they're out of order. After one
+      full pass the largest value has "bubbled" to the end. Repeat for the rest.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="one bubble-sort pass">
+        <g font-family="monospace" font-size="13">
+          <text x="20" y="30" fill="var(--ink-soft)">start</text>
+          <text x="90" y="30" fill="var(--ink)">5  1  4  2  8</text>
+          <text x="20" y="58" fill="var(--ink-soft)">swap 5,1</text>
+          <text x="90" y="58" fill="var(--ink)">1  5  4  2  8</text>
+          <text x="20" y="86" fill="var(--ink-soft)">swap 5,4</text>
+          <text x="90" y="86" fill="var(--ink)">1  4  5  2  8</text>
+          <text x="20" y="114" fill="var(--ink-soft)">swap 5,2</text>
+          <text x="90" y="114" fill="var(--ink)">1  4  2  5  8</text>
+          <text x="20" y="142" fill="var(--accent)">end of pass 1 — 8 is parked at the end</text>
+        </g>
+      </svg>`, `n passes, each up to n comparisons → about n² work. Simple, and slow.`)}
+    ` },
+    { type: "code", title: "bubble sort", code: `def bubble_sort(nums):
+    a = nums[:]                       # work on a copy
+    n = len(a)
+    for i in range(n):
+        for j in range(n - 1 - i):   # last i items are already parked
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+    return a
+
+print(bubble_sort([5, 1, 4, 2, 8]))` },
+
+    { type: "html", html: `
+      <h2>3 · Selection sort — O(n²)</h2>
+      <p>Scan the unsorted part for its smallest item (the "best so far" loop from Lesson 6), then
+      swap that into the first unsorted slot. Fewer swaps than bubble, same comparison count.</p>` },
+    { type: "code", title: "selection sort", code: `def selection_sort(nums):
+    a = nums[:]
+    n = len(a)
+    for i in range(n):
+        smallest = i
+        for j in range(i + 1, n):
+            if a[j] < a[smallest]:
+                smallest = j
+        a[i], a[smallest] = a[smallest], a[i]
+    return a
+
+print(selection_sort([5, 1, 4, 2, 8]))` },
+
+    { type: "html", html: `
+      <h2>4 · Insertion sort — O(n²), but great when nearly sorted</h2>
+      <p>Grow a sorted region on the left. Take the next item and slide it leftwards past everything
+      bigger, then drop it in. On an <em>almost-sorted</em> list each item barely moves — close to
+      O(n). This is why Python's real sort uses it for small runs.</p>` },
+    { type: "code", title: "insertion sort", code: `def insertion_sort(nums):
+    a = nums[:]
+    for i in range(1, len(a)):
+        key = a[i]
+        j = i - 1
+        while j >= 0 and a[j] > key:
+            a[j + 1] = a[j]          # shift bigger items right
+            j -= 1
+        a[j + 1] = key              # drop key into the gap
+    return a
+
+print(insertion_sort([5, 1, 4, 2, 8]))` },
+    { type: "html", html: whatif([
+      "the input is <em>already sorted</em> — how much work does insertion sort do? And bubble sort?",
+      "the input is sorted <em>backwards</em> — which of the three is worst?",
+      "you sort a list of 10 items vs 10,000 — O(n²) means the second takes about how many times longer?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>5 · Merge sort — O(n log n), stable</h2>
+      <p>Pure recursion (Lesson 17): <strong>split</strong> the list in half, sort each half, then
+      <strong>merge</strong> the two sorted halves by repeatedly taking the smaller front item. The
+      splitting is log n deep; each level does n work.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 600 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="merge sort split and merge">
+        <g font-family="monospace" font-size="12" fill="var(--ink)">
+          <text x="230" y="20">[5, 1, 4, 2]</text>
+          <text x="120" y="60">[5, 1]</text><text x="360" y="60">[4, 2]</text>
+          <text x="70" y="100">[5]</text><text x="170" y="100">[1]</text>
+          <text x="320" y="100">[4]</text><text x="420" y="100">[2]</text>
+        </g>
+        <g stroke="var(--ink-soft)">
+          <line x1="255" y1="26" x2="140" y2="48"/><line x1="290" y1="26" x2="380" y2="48"/>
+          <line x1="135" y1="66" x2="80" y2="88"/><line x1="150" y1="66" x2="180" y2="88"/>
+          <line x1="375" y1="66" x2="330" y2="88"/><line x1="390" y1="66" x2="430" y2="88"/>
+        </g>
+        <g font-family="monospace" font-size="12" fill="var(--accent)">
+          <text x="110" y="140">merge &rarr; [1, 5]</text>
+          <text x="340" y="140">merge &rarr; [2, 4]</text>
+          <text x="210" y="175">merge &rarr; [1, 2, 4, 5]</text>
+        </g>
+      </svg>`, `Halve until size 1 (trivially sorted), then merge back up. log n levels × n work per level.`)}
+    ` },
+    { type: "code", title: "merge, then merge_sort", code: `def merge(a, b):
+    out = []
+    i = j = 0
+    while i < len(a) and j < len(b):
+        if a[i] <= b[j]:
+            out.append(a[i]); i += 1
+        else:
+            out.append(b[j]); j += 1
+    out += a[i:]
+    out += b[j:]
+    return out
+
+def merge_sort(nums):
+    if len(nums) <= 1:
+        return nums[:]
+    mid = len(nums) // 2
+    return merge(merge_sort(nums[:mid]), merge_sort(nums[mid:]))
+
+print(merge_sort([5, 1, 4, 2, 8, 3]))` },
+
+    { type: "html", html: `
+      <h2>6 · Quicksort — O(n log n) average</h2>
+      <p>Pick a <strong>pivot</strong>. Partition the rest into "less than pivot" and "the rest".
+      Recurse on each part, then stitch: <code>quick(less) + [pivot] + quick(more)</code>. Fast in
+      practice, but a bad pivot on already-sorted data degrades to O(n²).</p>` },
+    { type: "code", title: "quicksort", code: `def quicksort(nums):
+    if len(nums) <= 1:
+        return nums[:]
+    pivot = nums[0]
+    less, more = [], []
+    for x in nums[1:]:
+        if x < pivot:
+            less.append(x)
+        else:
+            more.append(x)
+    return quicksort(less) + [pivot] + quicksort(more)
+
+print(quicksort([5, 1, 4, 2, 8, 3]))` },
+
+    { type: "html", html: `
+      <table class="tbl">
+        <tr><th>Sort</th><th>Best</th><th>Worst</th><th>Extra memory</th><th>Stable?</th><th>Good for</th></tr>
+        <tr><td>Bubble</td><td>O(n)*</td><td>O(n²)</td><td>O(1)</td><td>yes</td><td>teaching only</td></tr>
+        <tr><td>Selection</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>no</td><td>fewest swaps</td></tr>
+        <tr><td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(1)</td><td>yes</td><td>small / nearly-sorted</td></tr>
+        <tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>yes</td><td>guaranteed speed, linked lists</td></tr>
+        <tr><td>Quick</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>no</td><td>general in-memory (with good pivots)</td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--muted)">*with an early-exit check for "no swaps this pass".</p>
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li>Bubble / selection / insertion: two nested loops → O(n²). Insertion wins on nearly-sorted input.</li>
+        <li>Merge: split, recurse, <code>merge</code> two sorted lists → O(n log n) guaranteed, stable, uses O(n) space.</li>
+        <li>Quick: partition around a pivot, recurse → O(n log n) average, O(n²) on bad pivots, in-place-ish.</li>
+        <li>In real code: <code>sorted(nums)</code> / <code>nums.sort()</code> — Python's Timsort (merge + insertion).</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Python docs — sorted() & list.sort() (Timsort)", url: "https://docs.python.org/3/howto/sorting.html" },
+    { label: "Wikipedia — Sorting algorithm (comparison table)", url: "https://en.wikipedia.org/wiki/Sorting_algorithm" },
+    { label: "CS50x — Algorithms (sorting, big-O)", url: "https://cs50.harvard.edu/x/notes/3/" },
+  ],
+  exercises: [
+    {
+      title: "is_sorted(nums)",
+      tier: "warm", uses: ["loop + comparison (L6, L3)", "early return (L10)"],
+      prompt: `<p>Define <code>is_sorted(nums)</code> returning <code>True</code> if the list is in
+        non-decreasing order. Empty and single-item lists are sorted.</p>`,
+      solution: `def is_sorted(nums):\n    for i in range(1, len(nums)):\n        if nums[i] < nums[i - 1]:\n            return False\n    return True`,
+      success: "One pass comparing each item to the one before it.",
+      mustDefine: ["is_sorted"],
+      tests: [
+        { append: `print(is_sorted([1, 2, 2, 5]), is_sorted([1, 3, 2]), is_sorted([]), is_sorted([9]))`, expect: "True False True True" },
+      ],
+    },
+    {
+      title: "One bubble pass",
+      tier: "warm", uses: ["loop over indices (L6)", "swap (L7)"],
+      prompt: `<p>Define <code>one_pass(nums)</code>: return a copy of the list after a <strong>single</strong>
+        left-to-right pass of adjacent swaps (the largest item should reach the end).</p>`,
+      solution: `def one_pass(nums):\n    a = nums[:]\n    for j in range(len(a) - 1):\n        if a[j] > a[j + 1]:\n            a[j], a[j + 1] = a[j + 1], a[j]\n    return a`,
+      success: "This inner loop, repeated n times, IS bubble sort.",
+      mustDefine: ["one_pass"],
+      tests: [
+        { append: `print(one_pass([5, 1, 4, 2, 8]))`, expect: "[1, 4, 2, 5, 8]" },
+        { append: `print(one_pass([3, 2, 1]))`, expect: "[2, 1, 3]" },
+      ],
+    },
+    {
+      title: "bubble_sort(nums)",
+      tier: "core", uses: ["nested loops (L6)", "swap (L7)", "return a copy"],
+      prompt: `<p>Define <code>bubble_sort(nums)</code> returning a new ascending list. Don't mutate the
+        input.</p>`,
+      solution: `def bubble_sort(nums):\n    a = nums[:]\n    n = len(a)\n    for i in range(n):\n        for j in range(n - 1 - i):\n            if a[j] > a[j + 1]:\n                a[j], a[j + 1] = a[j + 1], a[j]\n    return a`,
+      success: "Each pass parks one more big value at the back.",
+      mustDefine: ["bubble_sort"],
+      forbid: [{ pattern: "sorted\\(|\\.sort\\(", tip: `<code>sorted(nums)</code> is the real answer — this is about seeing the O(n²) machinery.` }],
+      tests: [
+        { append: `print(bubble_sort([5, 1, 4, 2, 8, 3]))`, expect: "[1, 2, 3, 4, 5, 8]" },
+        { append: `src = [3, 1, 2]\nprint(bubble_sort(src), src)`, expect: "[1, 2, 3] [3, 1, 2]" },
+      ],
+    },
+    {
+      title: "selection_sort(nums)",
+      tier: "core", uses: ["'smallest so far' scan (L6)", "swap (L7)"],
+      prompt: `<p>Define <code>selection_sort(nums)</code> returning a new ascending list: for each
+        position, find the smallest of the remaining items and swap it in.</p>`,
+      solution: `def selection_sort(nums):\n    a = nums[:]\n    n = len(a)\n    for i in range(n):\n        smallest = i\n        for j in range(i + 1, n):\n            if a[j] < a[smallest]:\n                smallest = j\n        a[i], a[smallest] = a[smallest], a[i]\n    return a`,
+      success: "Exactly one swap per position — the minimum-swaps sort.",
+      mustDefine: ["selection_sort"],
+      forbid: [{ pattern: "sorted\\(|\\.sort\\(", tip: `Use the real <code>sorted()</code> in real code — practise the algorithm here.` }],
+      tests: [
+        { append: `print(selection_sort([64, 25, 12, 22, 11]))`, expect: "[11, 12, 22, 25, 64]" },
+        { append: `print(selection_sort([]))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "insertion_sort(nums)",
+      tier: "core", uses: ["while + shift (L6)", "grow a sorted prefix"],
+      prompt: `<p>Define <code>insertion_sort(nums)</code> returning a new ascending list: take each item
+        and slide it left past everything larger.</p>`,
+      solution: `def insertion_sort(nums):\n    a = nums[:]\n    for i in range(1, len(a)):\n        key = a[i]\n        j = i - 1\n        while j >= 0 and a[j] > key:\n            a[j + 1] = a[j]\n            j -= 1\n        a[j + 1] = key\n    return a`,
+      success: "On a nearly-sorted list the inner while barely runs — near O(n).",
+      mustDefine: ["insertion_sort"],
+      forbid: [{ pattern: "sorted\\(|\\.sort\\(", tip: `Real code: <code>sorted()</code>. Here: the algorithm.` }],
+      tests: [
+        { append: `print(insertion_sort([5, 2, 4, 6, 1, 3]))`, expect: "[1, 2, 3, 4, 5, 6]" },
+        { append: `print(insertion_sort([1, 2, 3]))`, expect: "[1, 2, 3]" },
+      ],
+    },
+    {
+      title: "merge(a, b)",
+      tier: "core", uses: ["two-pointer walk", "build a list (L7)", "slicing (L4)"],
+      prompt: `<p>Define <code>merge(a, b)</code>: given two <strong>already-sorted</strong> lists, return
+        one sorted list containing all their items. Walk both with a pointer each, always taking the
+        smaller front value.</p>`,
+      solution: `def merge(a, b):\n    out = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i])\n            i += 1\n        else:\n            out.append(b[j])\n            j += 1\n    out += a[i:]\n    out += b[j:]\n    return out`,
+      success: "This linear merge is the engine inside merge sort.",
+      mustDefine: ["merge"],
+      tests: [
+        { append: `print(merge([1, 4, 7], [2, 3, 8, 9]))`, expect: "[1, 2, 3, 4, 7, 8, 9]" },
+        { append: `print(merge([], [1, 2]))`, expect: "[1, 2]" },
+        { append: `print(merge([5], [1]))`, expect: "[1, 5]" },
+      ],
+    },
+    {
+      title: "merge_sort(nums)",
+      tier: "challenge", uses: ["recursion: split/combine (L17)", "your merge", "// for the midpoint (L3)"],
+      prompt: `<p>Define <code>merge_sort(nums)</code> recursively: base case length &le; 1; otherwise split
+        at <code>len // 2</code>, sort each half, and <code>merge</code> them. Assume <code>merge</code>
+        is available.</p>`,
+      solution: `def merge_sort(nums):\n    if len(nums) <= 1:\n        return nums[:]\n    mid = len(nums) // 2\n    return merge(merge_sort(nums[:mid]), merge_sort(nums[mid:]))`,
+      success: "Split log n times; merge n items per level → O(n log n), always.",
+      mustDefine: ["merge_sort"],
+      tests: [
+        { append: `def merge(a, b):\n    out, i, j = [], 0, 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]: out.append(a[i]); i += 1\n        else: out.append(b[j]); j += 1\n    return out + a[i:] + b[j:]\nprint(merge_sort([5, 2, 9, 1, 5, 6, 3]))`, expect: "[1, 2, 3, 5, 5, 6, 9]" },
+        { append: `def merge(a, b):\n    out, i, j = [], 0, 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]: out.append(a[i]); i += 1\n        else: out.append(b[j]); j += 1\n    return out + a[i:] + b[j:]\nprint(merge_sort([]), merge_sort([1]))`, expect: "[] [1]" },
+      ],
+    },
+    {
+      title: "quicksort(nums)",
+      tier: "challenge", uses: ["recursion (L17)", "partition with two lists", "list concat (L7)"],
+      prompt: `<p>Define <code>quicksort(nums)</code> recursively: base case length &le; 1; else take
+        <code>nums[0]</code> as the pivot, split the rest into <code>less</code> (&lt; pivot) and
+        <code>more</code> (&ge; pivot), and return
+        <code>quicksort(less) + [pivot] + quicksort(more)</code>.</p>`,
+      solution: `def quicksort(nums):\n    if len(nums) <= 1:\n        return nums[:]\n    pivot = nums[0]\n    less, more = [], []\n    for x in nums[1:]:\n        if x < pivot:\n            less.append(x)\n        else:\n            more.append(x)\n    return quicksort(less) + [pivot] + quicksort(more)`,
+      success: "Partition, recurse, stitch. Average O(n log n).",
+      mustDefine: ["quicksort"],
+      tests: [
+        { append: `print(quicksort([5, 2, 9, 1, 5, 6, 3]))`, expect: "[1, 2, 3, 5, 5, 6, 9]" },
+        { append: `print(quicksort([3, 3, 3]))`, expect: "[3, 3, 3]" },
+      ],
+    },
+    {
+      title: "k_smallest(nums, k)",
+      tier: "challenge", uses: ["partial selection sort (L6)", "swap (L7)", "slicing (L4)"],
+      prompt: `<p>Define <code>k_smallest(nums, k)</code> returning the <code>k</code> smallest values in
+        ascending order — by doing only <strong>k passes</strong> of selection sort, not a full sort.</p>`,
+      solution: `def k_smallest(nums, k):\n    a = nums[:]\n    for i in range(k):\n        smallest = i\n        for j in range(i + 1, len(a)):\n            if a[j] < a[smallest]:\n                smallest = j\n        a[i], a[smallest] = a[smallest], a[i]\n    return a[:k]`,
+      success: "You only need the front k in place — O(nk) beats a full O(n²) when k is small.",
+      mustDefine: ["k_smallest"],
+      tests: [
+        { append: `print(k_smallest([7, 2, 9, 1, 5, 3], 3))`, expect: "[1, 2, 3]" },
+        { append: `print(k_smallest([4, 4, 4], 2))`, expect: "[4, 4]" },
+        { append: `print(k_smallest([5], 0))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "sort_012(nums)",
+      tier: "boss", uses: ["three-pointer partition (Dutch flag)", "while + swap (L6, L7)", "if/elif (L5)"],
+      prompt: `<p>The list contains only <code>0</code>, <code>1</code>, <code>2</code>. Define
+        <code>sort_012(nums)</code> that sorts it <strong>in one pass</strong> with three pointers —
+        <code>lo</code>, <code>mid</code>, <code>hi</code> — and returns the list. (Mutating the input
+        is fine.)</p>`,
+      solution: `def sort_012(nums):\n    lo = 0\n    mid = 0\n    hi = len(nums) - 1\n    while mid <= hi:\n        if nums[mid] == 0:\n            nums[lo], nums[mid] = nums[mid], nums[lo]\n            lo += 1\n            mid += 1\n        elif nums[mid] == 1:\n            mid += 1\n        else:\n            nums[mid], nums[hi] = nums[hi], nums[mid]\n            hi -= 1\n    return nums`,
+      success: "One left-to-right sweep, O(n), O(1) extra — you can't sort general data this fast, but you can with only three values.",
+      mustDefine: ["sort_012"],
+      forbid: [{ pattern: "sorted\\(|\\.sort\\(|\\.count\\(", tip: `Counting 0s/1s/2s also works and is fine — the challenge was the single-pass three-pointer sweep.` }],
+      tests: [
+        { append: `print(sort_012([2, 0, 2, 1, 1, 0]))`, expect: "[0, 0, 1, 1, 2, 2]" },
+        { append: `print(sort_012([0, 0, 0]))`, expect: "[0, 0, 0]" },
+        { append: `print(sort_012([2, 1, 0]))`, expect: "[0, 1, 2]" },
+        { append: `print(sort_012([]))`, expect: "[]" },
       ],
     },
   ],

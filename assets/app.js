@@ -553,7 +553,14 @@ function renderSidebar() {
   if (location.hash === "#/" || location.hash === "") homeBtn.classList.add("active");
   nav.appendChild(homeBtn);
 
+  let lastSection = null;
   CURRICULUM.forEach((lesson, i) => {
+    if (lesson.section && lesson.section !== lastSection) {
+      lastSection = lesson.section;
+      const h = el("div", "nav-section");
+      h.textContent = lesson.section;
+      nav.appendChild(h);
+    }
     const b = el("button", "nav-item");
     const unlocked = lessonUnlocked(i);
     const done = Progress.lessonComplete(lesson);
@@ -575,20 +582,33 @@ function renderHome() {
   view.innerHTML = "";
   const hero = el("div", "home-hero");
   hero.innerHTML = `
-    <div class="eyebrow">Interactive Python course</div>
-    <h1>Learn the fundamentals of Python</h1>
-    <p>Twelve short, hands-on lessons. Every idea comes with a diagram, runnable examples you can
-    edit, and auto-checked exercises. Nothing is quizzed before it is taught. Python runs right here
-    in your browser — no installation needed.</p>
-    <p style="font-size:13.5px;color:var(--muted)">Built with material adapted from
-    <a href="https://cs50.harvard.edu/python/" target="_blank" rel="noopener">Harvard CS50’s Introduction to Programming with Python</a>,
-    the <a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">official Python Tutorial</a>,
-    and the <a href="https://peps.python.org/pep-0008/" target="_blank" rel="noopener">PEP 8 style guide</a>.</p>
+    <div class="eyebrow">Interactive course</div>
+    <h1>Python, from first line to algorithms</h1>
+    <p>${CURRICULUM.length} hands-on lessons in two parts: the language fundamentals, then core
+    data structures &amp; algorithms. Every idea comes with a diagram, runnable examples you can
+    edit, "what if?" experiments, and auto-checked exercises on a difficulty ramp. Nothing is
+    quizzed before it is taught. Python runs right here in your browser.</p>
+    <p style="font-size:13.5px;color:var(--muted)">Fundamentals adapted from
+    <a href="https://cs50.harvard.edu/python/" target="_blank" rel="noopener">Harvard CS50’s Introduction to Programming with Python</a>
+    and the <a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">official Python Tutorial</a>;
+    the algorithms part follows the same spirit as
+    <a href="https://cs50.harvard.edu/x/" target="_blank" rel="noopener">CS50x</a> and
+    <a href="https://docs.python.org/3/tutorial/datastructures.html" target="_blank" rel="noopener">the docs on data structures</a>.</p>
   `;
   view.appendChild(hero);
 
-  const grid = el("div", "home-grid");
+  let homeSection = null;
+  let grid = null;
   CURRICULUM.forEach((lesson, i) => {
+    if (lesson.section && lesson.section !== homeSection) {
+      homeSection = lesson.section;
+      const h = el("h2", "home-section");
+      h.textContent = lesson.section;
+      view.appendChild(h);
+      grid = el("div", "home-grid");
+      view.appendChild(grid);
+    }
+    if (!grid) { grid = el("div", "home-grid"); view.appendChild(grid); }
     const c = el("button", "home-card");
     const unlocked = lessonUnlocked(i);
     const done = Progress.lessonComplete(lesson);
@@ -601,7 +621,6 @@ function renderHome() {
     c.addEventListener("click", () => { if (unlocked) location.hash = "#/lesson/" + lesson.id; });
     grid.appendChild(c);
   });
-  view.appendChild(grid);
 
   const pgCard = el("div");
   pgCard.style.cssText = "margin-top:26px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)";
@@ -624,7 +643,7 @@ function renderLesson(id) {
   window.scrollTo(0, 0);
 
   const head = el("div", "lesson-head");
-  head.innerHTML = `<div class="eyebrow">Lesson ${i + 1} of ${CURRICULUM.length}</div>
+  head.innerHTML = `<div class="eyebrow">${lesson.section ? lesson.section + " · " : ""}Lesson ${i + 1} of ${CURRICULUM.length}</div>
     <h1 class="lesson-title">${lesson.title}</h1>
     <p class="lesson-lead">${lesson.lead}</p>`;
   view.appendChild(head);

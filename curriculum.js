@@ -28,6 +28,7 @@ const CURRICULUM = [
 /* ========================================================== 1 */
 {
   id: "syntax",
+  section: "Learn the basics",
   title: "Basic syntax",
   summary: "How a Python program is written and run: statements, print(), quotes, escape characters, and the # comment.",
   lead: "A program is a list of instructions the computer follows from top to bottom. Before anything clever, you need to be fluent in the shapes: a call, a string, a comment, a newline.",
@@ -253,6 +254,7 @@ print("Visible output")   # a comment can sit at the end of a line too
 /* ========================================================== 2 */
 {
   id: "variables",
+  section: "Learn the basics",
   title: "Variables & data types",
   summary: "Store values in named variables; know Python's core types: int, float, str, bool, None.",
   lead: "A variable is a name tied to a value. Master this and you stop repeating yourself — compute once, name it, reuse it everywhere.",
@@ -447,6 +449,7 @@ print(type(None))` },
 /* ========================================================== 3 */
 {
   id: "operators",
+  section: "Learn the basics",
   title: "Operators",
   summary: "Do arithmetic, compare values, and combine yes/no facts with and / or / not.",
   lead: "Operators are how values interact: +, -, *, /, the comparisons, and the logical words. Get comfortable here and conditionals & loops become easy.",
@@ -689,6 +692,7 @@ print(count)` },
 /* ========================================================== 4 */
 {
   id: "strings",
+  section: "Learn the basics",
   title: "Working with strings",
   summary: "Index, slice, join, and transform text; build messages with f-strings.",
   lead: "Text is data. To work with it fluently you need to reach any character by position, take any slice, and reshape it with methods — without ever mutating the original.",
@@ -972,6 +976,7 @@ print(f"{name} + {pets} more")` },
 /* ========================================================== 5 */
 {
   id: "conditionals",
+  section: "Learn the basics",
   title: "Conditionals",
   summary: "Run different code depending on whether a condition is True: if / elif / else.",
   lead: "Programs make decisions. Everything here rests on Lesson 3: a condition is just an expression that evaluates to True or False. The new part is choosing what runs next.",
@@ -1272,6 +1277,7 @@ else:
 /* ========================================================== 6 */
 {
   id: "loops",
+  section: "Learn the basics",
   title: "Loops",
   summary: "Repeat work with for and while; steer them with break and continue; master the accumulator.",
   lead: "This is where programs get powerful. A loop plus a condition plus an accumulator variable can answer almost any 'how many / what's the total / does any of them' question.",
@@ -1546,6 +1552,7 @@ print("Lift off!")` },
 /* ========================================================== 7 */
 {
   id: "collections",
+  section: "Learn the basics",
   title: "Lists, tuples, sets",
   summary: "Three ways to hold many values: the mutable list, the fixed tuple, the unique set.",
   lead: "You already looped over strings and built up totals. Now the thing you loop over — and the thing you build up — can be a collection of any values.",
@@ -1819,6 +1826,7 @@ print(unique)` },
 /* ========================================================== 8 */
 {
   id: "dicts",
+  section: "Learn the basics",
   title: "Dictionaries",
   summary: "Store data as key → value pairs and look things up by name instead of position.",
   lead: "A list finds things by position; a dictionary finds them by name. Once you can loop-and-count into a dict, you can summarise almost any data.",
@@ -2034,6 +2042,7 @@ print("s appears", counts["s"], "times")` },
 /* ========================================================== 9 */
 {
   id: "casting",
+  section: "Learn the basics",
   title: "Type casting",
   summary: "Convert between types with int(), float(), str(), bool() — and read input().",
   lead: "Data arrives as the wrong type constantly — text from input(), digits inside a string. Casting is the bridge, and it's where a lot of real bugs live.",
@@ -2234,6 +2243,7 @@ print(bool([1, 2]))` },
 /* ========================================================== 10 */
 {
   id: "functions",
+  section: "Learn the basics",
   title: "Functions & built-in functions",
   summary: "Package code into reusable functions with def and return; tour the essential built-ins.",
   lead: "Everything you've written so far has been a one-shot script. A function lets you name a piece of logic and reuse it — with different inputs — anywhere. This is the biggest step-up in the course.",
@@ -2496,6 +2506,7 @@ for i, value in enumerate(["a", "b", "c"]):
 /* ========================================================== 11 */
 {
   id: "exceptions",
+  section: "Learn the basics",
   title: "Exceptions",
   summary: "Handle errors gracefully with try / except / else / finally, and raise your own.",
   lead: "Real input is messy. int() gets a word, a list index is off the end, a divisor is zero. Exceptions let your program notice, respond, and carry on instead of crashing.",
@@ -2724,6 +2735,7 @@ except ValueError as e:
 /* ========================================================== 12 */
 {
   id: "comments-annotations",
+  section: "Learn the basics",
   title: "Comments & type annotations",
   summary: "Write comments and docstrings that help, and add type hints that document your intent.",
   lead: "You can now write real programs. This last lesson is about writing them so a human — future you, a teammate — can read them: comments that add value, docstrings, and type hints.",
@@ -2972,6 +2984,294 @@ print(repeat("x", "2".__len__()))` },
       tests: [
         { append: `print(clamp(5, 0, 10), clamp(-3, 0, 10), clamp(99, 0, 10))`, expect: "5 0 10" },
         { append: `print(clamp.__doc__ is not None)`, expect: "True" },
+      ],
+    },
+  ],
+},
+
+/* ========================================================== 13 */
+{
+  id: "arrays-linked-lists",
+  section: "Data Structures & Algorithms",
+  title: "Arrays and Linked Lists",
+  summary: "Two ways to store a sequence: a contiguous array (fast index) vs a chain of linked nodes (fast insert).",
+  lead: "You've used Python's list for a dozen lessons. Now look under the hood — and meet its opposite. The choice between them is the first real data-structure decision.",
+  spiral: ["lists: index, append, insert, slice (L7)", "dicts as records (L8)", "functions & return (L10)", "while loops (L6)", "None (L2, L11)"],
+  blocks: [
+    { type: "html", html: `
+      <h2>1 · Two shapes for \u201ca sequence of things\u201d</h2>
+      <p>An <strong>array</strong> stores its items <em>side by side</em> in memory. Item <code>i</code>
+      lives at <code>start + i * size</code>, so <code>a[i]</code> is one instant jump — no matter how
+      big the array. The catch: inserting at the front means <em>shifting every other item over</em>.</p>
+      <p>A <strong>linked list</strong> stores each item in its own little box (a <em>node</em>) that also
+      holds a pointer to the <em>next</em> box. The boxes can be anywhere. Following the chain to item
+      <code>i</code> takes <code>i</code> hops — but adding a new box at the front is a single step.</p>
+      ${fig(`
+      <svg class="ill" viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="array versus linked list">
+        <text x="20" y="24" font-size="13" font-weight="bold" fill="var(--ink)">array — contiguous, index = address maths</text>
+        <g font-family="monospace" font-size="14">
+          <rect x="20" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="76" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="132" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="188" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <rect x="244" y="34" width="56" height="44" fill="var(--box)" stroke="var(--box-line)"/>
+          <text x="48" y="61" text-anchor="middle" fill="var(--ink)">10</text>
+          <text x="104" y="61" text-anchor="middle" fill="var(--ink)">20</text>
+          <text x="160" y="61" text-anchor="middle" fill="var(--ink)">30</text>
+          <text x="216" y="61" text-anchor="middle" fill="var(--ink)">40</text>
+          <text x="272" y="61" text-anchor="middle" fill="var(--ink)">50</text>
+        </g>
+        <g font-family="monospace" font-size="11" fill="var(--accent)">
+          <text x="48" y="94" text-anchor="middle">0</text><text x="104" y="94" text-anchor="middle">1</text>
+          <text x="160" y="94" text-anchor="middle">2</text><text x="216" y="94" text-anchor="middle">3</text>
+          <text x="272" y="94" text-anchor="middle">4</text>
+        </g>
+        <text x="330" y="61" font-size="12" fill="var(--ink-soft)">a[3] &rarr; one jump. insert(0, x) &rarr; shift 4 items.</text>
+
+        <text x="20" y="140" font-size="13" font-weight="bold" fill="var(--ink)">linked list — scattered nodes joined by \u201cnext\u201d</text>
+        <text x="20" y="164" font-size="11" font-family="monospace" fill="var(--accent)">head</text>
+        <line x1="20" y1="170" x2="20" y2="188" stroke="var(--ink-soft)"/>
+        <g font-family="monospace" font-size="13">
+          <rect x="20" y="188" width="90" height="40" fill="var(--box)" stroke="var(--box-line)"/>
+          <line x1="80" y1="188" x2="80" y2="228" stroke="var(--box-line)"/>
+          <text x="50" y="213" text-anchor="middle" fill="var(--ink)">10</text>
+          <rect x="180" y="188" width="90" height="40" fill="var(--box)" stroke="var(--box-line)"/>
+          <line x1="240" y1="188" x2="240" y2="228" stroke="var(--box-line)"/>
+          <text x="210" y="213" text-anchor="middle" fill="var(--ink)">20</text>
+          <rect x="340" y="188" width="90" height="40" fill="var(--box)" stroke="var(--box-line)"/>
+          <line x1="400" y1="188" x2="400" y2="228" stroke="var(--box-line)"/>
+          <text x="370" y="213" text-anchor="middle" fill="var(--ink)">30</text>
+        </g>
+        <line x1="80" y1="208" x2="180" y2="208" stroke="var(--accent)" marker-end="url(#ah13)"/>
+        <line x1="240" y1="208" x2="340" y2="208" stroke="var(--accent)" marker-end="url(#ah13)"/>
+        <text x="430" y="213" font-size="13" font-family="monospace" fill="var(--ink-soft)">&rarr; None</text>
+        <defs><marker id="ah13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill="var(--accent)"/></marker></defs>
+      </svg>`, `Same five values, two layouts. Arrays win at random access; linked lists win at front insertion.`)}
+      <table class="tbl">
+        <tr><th>Operation</th><th>Array (Python <code>list</code>)</th><th>Linked list</th></tr>
+        <tr><td>read item <code>i</code></td><td><b>fast</b> — one step</td><td>slow — <code>i</code> hops</td></tr>
+        <tr><td>insert / remove at front</td><td>slow — shift everything</td><td><b>fast</b> — one step</td></tr>
+        <tr><td>insert / remove at back</td><td><b>fast</b> (amortised)</td><td>slow — walk to the tail</td></tr>
+        <tr><td>memory</td><td>tight, one block</td><td>extra pointer per item</td></tr>
+      </table>` },
+
+    { type: "html", html: `
+      <h2>2 · Python's <code>list</code> is a dynamic array</h2>
+      <p>Everything you know about <code>list</code> from Lesson 7 is an array in disguise:
+      <code>a[i]</code> is instant; <code>a.append(x)</code> is (usually) instant; but
+      <code>a.insert(0, x)</code> and <code>a.pop(0)</code> quietly move every other element.</p>` },
+    { type: "code", title: "Array moves you don't see", code: `a = [10, 20, 30, 40, 50]
+print(a[3])          # instant, no matter the size
+
+a.insert(0, 5)       # every element shifted right by one
+print(a)
+
+a.pop(2)             # everything after index 2 shifts left
+print(a)` },
+    { type: "html", html: whatif([
+      "the list had a million items — would <code>a[500000]</code> be slower than <code>a[3]</code>?",
+      "you called <code>a.insert(0, x)</code> a million times — fast or slow overall?",
+      "you only ever add/remove at the <em>end</em> — is a plain list a good choice?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>3 · Building a linked list with dict nodes</h2>
+      <p>A real linked list uses a class (a later topic). To see the <em>structure</em> clearly we'll
+      use a <strong>dict per node</strong>: <code>{"val": ..., "next": ...}</code>. The last node's
+      <code>"next"</code> is <code>None</code>. One variable, <code>head</code>, points at the first node.</p>` },
+    { type: "code", title: "Three nodes, chained", code: `third  = {"val": 30, "next": None}
+second = {"val": 20, "next": third}
+head   = {"val": 10, "next": second}
+
+print(head["val"])
+print(head["next"]["val"])
+print(head["next"]["next"]["val"])
+print(head["next"]["next"]["next"])   # None -> end of the list` },
+
+    { type: "html", html: `
+      <h2>4 · The traversal loop — memorise this shape</h2>
+      <p>Start at <code>head</code>. While the current node isn't <code>None</code>, use it, then
+      <em>step to <code>node["next"]</code></em>. This loop is to linked lists what
+      <code>for x in list</code> is to arrays.</p>` },
+    { type: "code", title: "Walk every node", code: `head = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}
+
+node = head
+while node is not None:
+    print(node["val"])
+    node = node["next"]      # <-- the step that ends the loop` },
+    { type: "html", html: whatif([
+      "you forget the <code>node = node[\"next\"]</code> line — what happens?",
+      "the list is empty (<code>head is None</code>) — does the loop body run at all?",
+      "you write <code>while node[\"next\"] is not None</code> instead — which node gets missed?",
+    ]) },
+
+    { type: "html", html: `
+      <h2>5 · Prepend is cheap; append is a walk</h2>
+      <p>To add to the <strong>front</strong>: make a new node whose <code>"next"</code> is the old
+      head, then move <code>head</code>. One step. To add to the <strong>back</strong>: you must walk
+      all the way to the last node first.</p>` },
+    { type: "code", title: "push_front vs append", code: `head = {"val": 20, "next": {"val": 30, "next": None}}
+
+# prepend 10  (O(1))
+head = {"val": 10, "next": head}
+
+# append 40  (O(n): walk to the tail)
+node = head
+while node["next"] is not None:
+    node = node["next"]
+node["next"] = {"val": 40, "next": None}
+
+node = head
+while node is not None:
+    print(node["val"], end=" ")
+    node = node["next"]` },
+    { type: "html", html: `
+      <div class="predict"><b>Predict first</b>After the two operations above, what does the final loop
+      print? Now: if you swapped the order (append first, then prepend), would the output change?</div>
+      <div class="tip"><b>Recap</b>
+      <ul style="margin:6px 0 0">
+        <li><strong>Array</strong>: contiguous; <code>a[i]</code> is O(1); front insert/remove is O(n).</li>
+        <li>Python's <code>list</code> is a dynamic array — <code>insert(0, …)</code> / <code>pop(0)</code> are secretly O(n).</li>
+        <li><strong>Linked list</strong>: nodes <code>{"val", "next"}</code> chained to <code>None</code>; one <code>head</code>.</li>
+        <li>Traversal: <code>node = head; while node is not None: … ; node = node["next"]</code>.</li>
+        <li>Prepend is O(1); reaching or appending at the end is O(n).</li>
+      </ul></div>` },
+  ],
+  refs: [
+    { label: "Python docs — Using lists as arrays / data structures", url: "https://docs.python.org/3/tutorial/datastructures.html" },
+    { label: "Python Wiki — Time complexity of list operations", url: "https://wiki.python.org/moin/TimeComplexity" },
+    { label: "CS50 — Data Structures (linked lists)", url: "https://cs50.harvard.edu/x/notes/5/" },
+  ],
+  exercises: [
+    {
+      title: "Front vs back",
+      tier: "warm", uses: ["list.insert / append (L7)"],
+      prompt: `<p>Start from <code>a = [1, 2, 3]</code>. Append <code>4</code>, then insert <code>0</code>
+        at the front. Print the list.</p><pre>[0, 1, 2, 3, 4]</pre>`,
+      starter: `a = [1, 2, 3]\n`,
+      solution: `a = [1, 2, 3]\na.append(4)\na.insert(0, 0)\nprint(a)`,
+      success: "append is cheap; insert(0, …) shifts everything — cheap here, costly at scale.",
+      tests: [{ expect: "[0, 1, 2, 3, 4]" }],
+    },
+    {
+      title: "Read the third node",
+      tier: "warm", uses: ["dict access (L8)"],
+      prompt: `<p>The starter builds a 3-node list. Print the value of the <strong>third</strong> node by
+        following <code>"next"</code> twice.</p><pre>30</pre>`,
+      starter: `head = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}\n`,
+      solution: `head = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}\nprint(head["next"]["next"]["val"])`,
+      success: "Each [\"next\"] is one hop along the chain.",
+      tests: [{ expect: "30" }],
+    },
+    {
+      title: "length(head)",
+      tier: "core", uses: ["traversal loop", "accumulator (L6)", "functions (L10)"],
+      prompt: `<p>Define <code>length(head)</code> returning how many nodes are in the linked list
+        (<code>0</code> for an empty list, i.e. <code>head is None</code>).</p>`,
+      solution: `def length(head):\n    n = 0\n    node = head\n    while node is not None:\n        n += 1\n        node = node["next"]\n    return n`,
+      success: "The traversal loop with a counter.",
+      mustDefine: ["length"],
+      tests: [
+        { append: `print(length({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "3" },
+        { append: `print(length(None))`, expect: "0" },
+        { append: `print(length({"val": 9, "next": None}))`, expect: "1" },
+      ],
+    },
+    {
+      title: "sum_list(head)",
+      tier: "core", uses: ["traversal", "accumulator (L6)"],
+      prompt: `<p>Define <code>sum_list(head)</code> returning the total of every node's <code>"val"</code>
+        (<code>0</code> for empty).</p>`,
+      solution: `def sum_list(head):\n    total = 0\n    node = head\n    while node is not None:\n        total += node["val"]\n        node = node["next"]\n    return total`,
+      success: "Same loop, different accumulator.",
+      mustDefine: ["sum_list"],
+      tests: [
+        { append: `print(sum_list({"val": 5, "next": {"val": 10, "next": {"val": 2, "next": None}}}))`, expect: "17" },
+        { append: `print(sum_list(None))`, expect: "0" },
+      ],
+    },
+    {
+      title: "to_list(head)",
+      tier: "core", uses: ["traversal", "build a list (L7)", "functions (L10)"],
+      prompt: `<p>Define <code>to_list(head)</code> returning a plain Python list of the node values in
+        order.</p>`,
+      solution: `def to_list(head):\n    out = []\n    node = head\n    while node is not None:\n        out.append(node["val"])\n        node = node["next"]\n    return out`,
+      success: "Collect values into an array as you walk the chain.",
+      mustDefine: ["to_list"],
+      tests: [
+        { append: `print(to_list({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "[1, 2, 3]" },
+        { append: `print(to_list(None))`, expect: "[]" },
+      ],
+    },
+    {
+      title: "from_list(values)",
+      tier: "core", uses: ["loop over list (L6, L7)", "node dicts", "prepend trick"],
+      prompt: `<p>Define <code>from_list(values)</code> that builds a linked list from a Python list and
+        returns its <code>head</code>. Order must match. (Tip: walk <code>values</code> backwards and
+        prepend, or build front-to-back tracking a <code>tail</code>.)</p>`,
+      solution: `def from_list(values):\n    head = None\n    for v in reversed(values):\n        head = {"val": v, "next": head}\n    return head`,
+      success: "Prepending in reverse order lands everything in the right place.",
+      mustDefine: ["from_list"],
+      tests: [
+        { append: `h = from_list([1, 2, 3])\nout = []\nwhile h is not None:\n    out.append(h["val"])\n    h = h["next"]\nprint(out)`, expect: "[1, 2, 3]" },
+        { append: `print(from_list([]))`, expect: "None" },
+      ],
+    },
+    {
+      title: "contains(head, target)",
+      tier: "challenge", uses: ["traversal", "if / return early (L5, L10)", "bool"],
+      prompt: `<p>Define <code>contains(head, target)</code> returning <code>True</code> if any node's
+        value equals <code>target</code>, else <code>False</code>.</p>`,
+      solution: `def contains(head, target):\n    node = head\n    while node is not None:\n        if node["val"] == target:\n            return True\n        node = node["next"]\n    return False`,
+      success: "Return True the moment you find it; if the loop ends, it's not there.",
+      mustDefine: ["contains"],
+      tests: [
+        { append: `h = {"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}\nprint(contains(h, 2), contains(h, 9))`, expect: "True False" },
+        { append: `print(contains(None, 1))`, expect: "False" },
+      ],
+    },
+    {
+      title: "nth(head, i)",
+      tier: "challenge", uses: ["traversal with a counter", "if / return (L5)"],
+      prompt: `<p>Define <code>nth(head, i)</code> returning the value of node <code>i</code> (0-indexed),
+        or the string <code>"out of range"</code> if <code>i</code> is too big or negative.</p>`,
+      solution: `def nth(head, i):\n    if i < 0:\n        return "out of range"\n    node = head\n    count = 0\n    while node is not None:\n        if count == i:\n            return node["val"]\n        count += 1\n        node = node["next"]\n    return "out of range"`,
+      success: "Hop i times; if you fall off the end first, it's out of range.",
+      mustDefine: ["nth"],
+      tests: [
+        { append: `h = {"val": 10, "next": {"val": 20, "next": {"val": 30, "next": None}}}\nprint(nth(h, 0), nth(h, 2), nth(h, 3), nth(h, -1))`, expect: "10 30 out of range out of range" },
+      ],
+    },
+    {
+      title: "reverse(head)",
+      tier: "challenge", uses: ["traversal", "three-pointer rewiring", "None (L2)"],
+      prompt: `<p>Define <code>reverse(head)</code> that reverses the links and returns the new head.
+        Classic technique: keep <code>prev</code>, walk the list, and on each node point its
+        <code>"next"</code> back at <code>prev</code>.</p>`,
+      solution: `def reverse(head):\n    prev = None\n    node = head\n    while node is not None:\n        nxt = node["next"]\n        node["next"] = prev\n        prev = node\n        node = nxt\n    return prev`,
+      success: "Save the next node before you overwrite the pointer — then slide prev and node forward.",
+      mustDefine: ["reverse"],
+      tests: [
+        { append: `h = {"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}\nr = reverse(h)\nout = []\nwhile r is not None:\n    out.append(r["val"])\n    r = r["next"]\nprint(out)`, expect: "[3, 2, 1]" },
+        { append: `print(reverse(None))`, expect: "None" },
+      ],
+    },
+    {
+      title: "middle(head)",
+      tier: "boss", uses: ["two-pointer (slow / fast)", "traversal", "functions (L10)"],
+      prompt: `<p>Define <code>middle(head)</code> returning the value of the middle node in one pass —
+        <strong>without</strong> first counting the length. Use two pointers: <code>slow</code> moves
+        one step, <code>fast</code> moves two; when <code>fast</code> runs off the end, <code>slow</code>
+        is at the middle. For an even count, return the <em>second</em> of the two middles. Assume
+        a non-empty list.</p>`,
+      solution: `def middle(head):\n    slow = head\n    fast = head\n    while fast is not None and fast["next"] is not None:\n        slow = slow["next"]\n        fast = fast["next"]["next"]\n    return slow["val"]`,
+      success: "The fast pointer covers the list in half the steps, so slow lands dead centre.",
+      mustDefine: ["middle"],
+      tests: [
+        { append: `print(middle({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": None}}}))`, expect: "2" },
+        { append: `print(middle({"val": 1, "next": {"val": 2, "next": {"val": 3, "next": {"val": 4, "next": None}}}}))`, expect: "3" },
+        { append: `print(middle({"val": 42, "next": None}))`, expect: "42" },
       ],
     },
   ],
