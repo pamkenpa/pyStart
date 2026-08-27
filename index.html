@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PyStart — Learn Python Basics</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" href="assets/styles.css?v=4" />
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">&gt;_</div>
+      <div>
+        <div class="brand-name">PyStart</div>
+        <div class="brand-tag">Learn Python, one idea at a time</div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div id="progressBar" class="progress-fill"></div></div>
+      <div id="progressText" class="progress-text">0% complete</div>
+    </div>
+
+    <nav id="lessonNav" aria-label="Lessons"></nav>
+
+    <div class="sidebar-foot">
+      <button id="playgroundBtn" class="ghost-btn">🧪 Open Playground IDE</button>
+      <div class="foot-row">
+        <button id="themeBtn" class="mini-btn" title="Toggle light / dark">◑ Theme</button>
+        <button id="resetBtn" class="mini-btn" title="Erase saved progress">↺ Reset</button>
+      </div>
+      <div id="engineStatus" class="engine-status" title="Python runs in your browser via Pyodide (WebAssembly)">
+        <span class="dot"></span><span class="engine-label">Python engine: starting…</span>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="view"><!-- rendered by app.js --></div>
+  </main>
+</div>
+
+<!-- Modal for collecting program input() lines -->
+<div id="inputModal" class="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="inputModalTitle">
+    <h3 id="inputModalTitle">Your program asks for input</h3>
+    <p class="modal-sub">This code calls <code>input()</code>. Type the responses your program should
+      receive, <strong>one per line</strong> (in the order it will ask for them).</p>
+    <textarea id="inputModalText" rows="5" spellcheck="false" placeholder="e.g.&#10;Alice&#10;30"></textarea>
+    <div class="modal-actions">
+      <button id="inputModalCancel" class="ghost-btn">Cancel</button>
+      <button id="inputModalRun" class="primary-btn">Run with this input</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/curriculum.js?v=4"></script>
+<script src="assets/app.js?v=4"></script>
+</body>
+</html>
