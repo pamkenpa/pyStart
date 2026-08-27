@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # PyStart — an interactive Python basics course
 
 A self-contained web app that teaches the fundamentals of Python. Every lesson has
@@ -97,3 +98,7 @@ Each lesson ends with a "Go deeper" box linking the specific pages it draws on.
 - More lessons: modules & `import`, file reading, list/dict comprehensions, `class` basics.
 - A "reference card" page summarising syntax learned so far.
 - Export/import progress as a file.
+=======
+# pyStart
+python learning app
+>>>>>>> ad06d55abe9c8da63ee66a0601d71c830c85effb
