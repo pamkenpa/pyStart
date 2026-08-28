@@ -564,11 +564,38 @@ function renderConsole(cons, res) {
    5. Progress store
    --------------------------------------------------------- */
 const KEY = "pystart.progress.v1";
+
+function readStore() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+}
+/* union two progress objects — an exercise passed in EITHER stays passed.
+   shape: { [lessonId]: { ex: { [idx]: true } } } */
+function mergeProgress(a, b) {
+  const out = {};
+  for (const src of [a || {}, b || {}]) {
+    for (const lid in src) {
+      const ex = (src[lid] && src[lid].ex) || {};
+      out[lid] = out[lid] || { ex: {} };
+      for (const i in ex) if (ex[i]) out[lid].ex[i] = true;
+    }
+  }
+  return out;
+}
+
 const Progress = {
-  data: load(),
-  save() { try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (e) {} },
+  data: readStore(),
+  _wiped: false,   // set by reset() so the next save() doesn't merge the old state back in
+  /* Always merge with what's on disk before writing, so a second/older tab can
+     never overwrite newer progress. */
+  save() {
+    try {
+      this.data = this._wiped ? this.data : mergeProgress(readStore(), this.data);
+      localStorage.setItem(KEY, JSON.stringify(this.data));
+    } catch (e) {}
+  },
   exDone(lessonId, exIdx) { return !!(this.data[lessonId] && this.data[lessonId].ex && this.data[lessonId].ex[exIdx]); },
   markEx(lessonId, exIdx) {
+    this._wiped = false;
     this.data[lessonId] = this.data[lessonId] || { ex: {} };
     this.data[lessonId].ex = this.data[lessonId].ex || {};
     this.data[lessonId].ex[exIdx] = true;
@@ -580,13 +607,33 @@ const Progress = {
     for (let i = 0; i < lesson.exercises.length; i++) if (!st.ex[i]) return false;
     return true;
   },
-  reset() { this.data = {}; this.save(); },
+  /* fold external progress (another tab, or an imported file) into memory — additive */
+  absorb(incoming) {
+    this._wiped = false;
+    this.data = mergeProgress(this.data, incoming || {});
+  },
+  reset() {
+    this._wiped = true;
+    this.data = {};
+    try { localStorage.removeItem(KEY); } catch (e) {}
+  },
 };
-function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
 
 function lessonUnlocked(i) {
   if (i <= 0) return true;
   return Progress.lessonComplete(CURRICULUM[i - 1]);
+}
+/* Lessons are a recommended path, not a wall: a learner can open any lesson,
+   but is asked once per session before jumping ahead of their progress. */
+let jumpAheadOK = false;
+function allowJumpAhead(i) {
+  if (jumpAheadOK || lessonUnlocked(i)) return true;
+  const ok = confirm(
+    "You haven't finished the lessons before this one.\n\n" +
+    "The course builds up in order — earlier ideas are used later — but you're free to jump in. Open it anyway?"
+  );
+  if (ok) jumpAheadOK = true;
+  return ok;
 }
 function completedCount() {
   return CURRICULUM.filter((l) => Progress.lessonComplete(l)).length;
@@ -632,20 +679,21 @@ function renderSidebar() {
     const cp = isCheckpoint(lesson);
     if (done) b.classList.add("done");
     if (cp) b.classList.add("checkpoint");
+    if (!unlocked) b.classList.add("locked");
     if (location.hash === "#/lesson/" + lesson.id) b.classList.add("active");
-    b.disabled = !unlocked;
     const badge = done ? "✓" : (unlocked ? (cp ? "◆" : String(lessonNumber(i))) : "🔒");
     const sub = cp
       ? "Checkpoint · " + lesson.exercises.length + " part" + (lesson.exercises.length === 1 ? "" : "s")
       : lesson.exercises.length + " exercise" + (lesson.exercises.length === 1 ? "" : "s");
     b.innerHTML = `<span class="nav-badge">${badge}</span><span><span class="nav-title">${lesson.title}</span><br><span class="nav-sub">${sub}</span></span>`;
-    b.addEventListener("click", () => { if (unlocked) location.hash = "#/lesson/" + lesson.id; });
+    b.addEventListener("click", () => { location.hash = "#/lesson/" + lesson.id; });
     nav.appendChild(b);
   });
 
   const pct = Math.round((completedCount() / CURRICULUM.length) * 100);
   document.getElementById("progressBar").style.width = pct + "%";
   document.getElementById("progressText").textContent = pct + "% complete · " + completedCount() + "/" + CURRICULUM.length + " done";
+  refreshBackupReminder();
 }
 
 function renderHome() {
@@ -689,14 +737,14 @@ function renderHome() {
     const done = Progress.lessonComplete(lesson);
     const cp = isCheckpoint(lesson);
     if (cp) c.classList.add("checkpoint");
-    c.disabled = !unlocked;
+    if (!unlocked) c.classList.add("locked");
     const state = done ? '<span class="hc-state done">✓ Completed</span>'
       : unlocked ? `<span class="hc-state open">● ${cp ? "Ready" : "Available"}</span>`
-      : '<span class="hc-state locked">🔒 Finish the previous lesson</span>';
+      : '<span class="hc-state locked">🔒 Recommended: finish the earlier lessons first</span>';
     const num = cp ? "Checkpoint" : "Lesson " + lessonNumber(i);
     c.innerHTML = `<div class="hc-num${cp ? " checkpoint" : ""}">${num}</div><div class="hc-title">${lesson.title}</div>
       <div class="hc-desc">${lesson.summary}</div>${state}`;
-    c.addEventListener("click", () => { if (unlocked) location.hash = "#/lesson/" + lesson.id; });
+    c.addEventListener("click", () => { location.hash = "#/lesson/" + lesson.id; });
     grid.appendChild(c);
   });
 
@@ -714,7 +762,7 @@ function renderHome() {
 function renderLesson(id) {
   const i = CURRICULUM.findIndex((l) => l.id === id);
   if (i < 0) { renderHome(); return; }
-  if (!lessonUnlocked(i)) { location.hash = "#/"; return; }
+  if (!allowJumpAhead(i)) { location.hash = "#/"; return; }
   const lesson = CURRICULUM[i];
   view.innerHTML = "";
   view.scrollIntoView({ block: "start" });
@@ -811,8 +859,7 @@ function renderLesson(id) {
   next.textContent = canNext ? CURRICULUM[i + 1].title + " →" : "Finish 🎉";
   next.addEventListener("click", () => {
     if (!canNext) { location.hash = "#/"; return; }
-    if (lessonUnlocked(i + 1)) location.hash = "#/lesson/" + CURRICULUM[i + 1].id;
-    else alert("Finish this lesson’s exercises first — then the next one opens up.");
+    location.hash = "#/lesson/" + CURRICULUM[i + 1].id;   // renderLesson prompts if it's still locked
   });
   foot.appendChild(prev);
   foot.appendChild(next);
@@ -1197,6 +1244,13 @@ function renderReview() {
 /* ---------------------------------------------------------
    8d. Progress export / import (a single JSON file)
    --------------------------------------------------------- */
+const BACKUP_KEY = "pystart.backup.v1";
+function markBackedUp() {
+  try { localStorage.setItem(BACKUP_KEY, JSON.stringify({ at: Date.now(), completed: completedCount() })); } catch (e) {}
+}
+function lastBackup() {
+  try { return JSON.parse(localStorage.getItem(BACKUP_KEY)) || null; } catch (e) { return null; }
+}
 function exportProgress() {
   const payload = { app: "pystart", v: 1, savedAt: new Date().toISOString(), data: Progress.data };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -1207,6 +1261,8 @@ function exportProgress() {
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+  markBackedUp();
+  refreshBackupReminder();
 }
 function importProgress(file) {
   const reader = new FileReader();
@@ -1225,8 +1281,8 @@ function importProgress(file) {
           (v.ex == null || (typeof v.ex === "object" && !Array.isArray(v.ex)));
       });
     if (!looksOk) { alert("That file doesn't look like a PyStart progress export."); return; }
-    if (!confirm("Replace your current progress with the contents of this file?")) return;
-    Progress.data = data;
+    if (!confirm("Merge this file into your progress? (It can only add completed exercises, never remove them.)")) return;
+    Progress.absorb(data);
     Progress.save();
     route();
     alert("Progress imported.");
@@ -1249,9 +1305,71 @@ function route() {
 }
 window.addEventListener("hashchange", route);
 
+/* Keep every open tab in sync, so an old tab can't roll back newer progress.
+   Fires only in OTHER tabs of this origin when localStorage changes. */
+window.addEventListener("storage", (e) => {
+  if (e.key !== KEY) return;
+  if (e.newValue == null) { Progress._wiped = true; Progress.data = {}; }
+  else { try { Progress.absorb(JSON.parse(e.newValue)); } catch (_) {} }
+  try { renderSidebar(); } catch (_) {}
+  try { view.dispatchEvent(new CustomEvent("ex-passed")); } catch (_) {}   // refresh banner if a lesson is open
+});
+/* flush once more when the tab is hidden/closed, just in case */
+window.addEventListener("pagehide", () => { try { Progress.save(); } catch (_) {} });
+
+/* Ask the browser to keep our storage across eviction / Safari's 7-day rule.
+   Granted silently on Chrome/Edge for engaged sites; prompts on Firefox; no-op on Safari. */
+let storagePersisted = true;   // assume fine until we learn otherwise
+(async function persistStorage() {
+  try {
+    if (navigator.storage && navigator.storage.persist) {
+      storagePersisted = await navigator.storage.persisted();
+      if (!storagePersisted) storagePersisted = await navigator.storage.persist();
+    }
+  } catch (_) {}
+  refreshBackupReminder();
+})();
+
+/* A standing reminder in the sidebar: your progress lives only in this browser —
+   keep a backup. Shown whenever there is any progress; wording firms up if the
+   browser hasn't guaranteed persistent storage. Not a modal, not dismissible —
+   just a small always-there panel next to Export. */
+function backupAgeText() {
+  const lb = lastBackup();
+  if (!lb) return "never backed up";
+  const delta = completedCount() - (lb.completed || 0);
+  if (delta <= 0) return "backup up to date";
+  return delta + " lesson" + (delta === 1 ? "" : "s") + " since last backup";
+}
+function refreshBackupReminder() {
+  const foot = document.querySelector(".sidebar-foot");
+  if (!foot) return;
+  let box = document.getElementById("backupReminder");
+  const hasProgress = Object.keys(Progress.data).length > 0;
+  if (!hasProgress) { if (box) box.remove(); return; }
+  if (!box) {
+    box = el("div", "backup-reminder");
+    box.id = "backupReminder";
+    const anchor = document.getElementById("engineStatus");
+    foot.insertBefore(box, anchor || null);
+  }
+  const warn = storagePersisted
+    ? ""
+    : `<div class="br-warn">⚠ This browser may delete saved progress.</div>`;
+  box.innerHTML = warn +
+    `<div class="br-body">Progress is saved <b>in this browser only</b>. Keep a backup you can re-import on any device.</div>` +
+    `<button type="button" class="br-btn">⇩ Back up progress</button>` +
+    `<div class="br-meta">${backupAgeText()}</div>`;
+  box.querySelector(".br-btn").addEventListener("click", exportProgress);
+}
+view.addEventListener("ex-passed", refreshBackupReminder);
+
 document.getElementById("playgroundBtn").addEventListener("click", () => { location.hash = "#/playground"; });
 document.getElementById("resetBtn").addEventListener("click", () => {
-  if (confirm("Erase all saved progress and start over?")) { Progress.reset(); route(); }
+  if (!confirm("Erase all saved progress and start over?\n\nA backup file will download first so you can restore it later.")) return;
+  if (Object.keys(Progress.data).length) { try { exportProgress(); } catch (_) {} }
+  Progress.reset();
+  route();
 });
 (function wireExtras() {
   const on = (id, fn) => { const b = document.getElementById(id); if (b) b.addEventListener("click", fn); };
