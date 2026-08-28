@@ -3,9 +3,90 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PyStart — Learn Python Basics</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" />
-<link rel="stylesheet" href="assets/styles.css?v=11" />
+
+<title>PyStart — learn Python in your browser, free &amp; interactive</title>
+<meta name="description" content="Free interactive Python course: 61 lessons and 406 auto-graded exercises that run real Python in your browser. No signup, no install, works offline." />
+<link rel="canonical" href="https://pamkenpa.github.io/pyStart/" />
+<meta name="author" content="pamkenpa" />
+<meta name="robots" content="index, follow" />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#0e1116" />
+
+<!-- Open Graph (Facebook, LinkedIn, Slack, Discord, …) -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="PyStart" />
+<meta property="og:title" content="PyStart — learn Python in your browser" />
+<meta property="og:description" content="61 lessons and 406 auto-graded exercises that run real Python in your browser. No signup, no install." />
+<meta property="og:url" content="https://pamkenpa.github.io/pyStart/" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content="https://pamkenpa.github.io/pyStart/assets/og-image.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="PyStart: learn Python in your browser — 61 interactive lessons, 406 auto-graded exercises." />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="PyStart — learn Python in your browser" />
+<meta name="twitter:description" content="61 lessons and 406 auto-graded exercises that run real Python in your browser. No signup, no install." />
+<meta name="twitter:image" content="https://pamkenpa.github.io/pyStart/assets/og-image.png" />
+<meta name="twitter:image:alt" content="PyStart: learn Python in your browser — 61 interactive lessons, 406 auto-graded exercises." />
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="sitemap" type="application/xml" href="sitemap.xml" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://pamkenpa.github.io/pyStart/#website",
+      "url": "https://pamkenpa.github.io/pyStart/",
+      "name": "PyStart",
+      "description": "Free interactive Python course that runs real Python in your browser.",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Course",
+      "name": "PyStart — Interactive Python Course",
+      "description": "A free interactive Python course: 61 lessons and 406 auto-graded exercises that execute real Python in the browser via Pyodide. Covers syntax, data structures and algorithms, OOP, testing, typing, tooling and web frameworks. No signup or installation required.",
+      "url": "https://pamkenpa.github.io/pyStart/",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "learningResourceType": "Interactive course",
+      "teaches": [
+        "Python syntax and semantics",
+        "Data structures and algorithms",
+        "Object-oriented programming",
+        "Automated testing (unittest, doctest, pytest)",
+        "Static typing and tooling",
+        "Web frameworks (Flask, Django, FastAPI)"
+      ],
+      "provider": {
+        "@type": "Organization",
+        "name": "PyStart",
+        "url": "https://pamkenpa.github.io/pyStart/"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "category": "Free"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "courseWorkload": "PT40H",
+        "inLanguage": "en"
+      }
+    }
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="assets/styles.css?v=12" />
 </head>
 <body>
 <div id="app">
@@ -45,7 +126,42 @@
   </aside>
 
   <main id="main">
-    <div id="view"><!-- rendered by app.js --></div>
+    <div id="view">
+      <!-- Static content for search engines and no-JS visitors.
+           app.js replaces #view on load, so JS users never see this. -->
+      <article class="seo-fallback">
+        <h1>PyStart — learn Python in your browser</h1>
+        <p>PyStart is a free, interactive Python course. It runs <strong>real Python in your
+        browser</strong> (via Pyodide / WebAssembly) &mdash; there is nothing to install and no
+        account to create, and after the first visit it works offline. Every lesson has diagrams,
+        editable examples you can run, and <strong>auto-graded exercises</strong> on a difficulty
+        ramp: the grader accepts any working answer, then nudges you toward cleaner, more idiomatic
+        code.</p>
+        <p>The course is <strong>61 lessons and 406 exercises</strong> across 14 sections, plus 5
+        checkpoint projects:</p>
+        <ul>
+          <li><strong>Learn the basics</strong> &mdash; syntax, variables, operators, strings, conditionals, loops, lists / tuples / sets, dictionaries, type casting, functions, exceptions, comments and type annotations</li>
+          <li><strong>Data structures &amp; algorithms</strong> &mdash; arrays and linked lists, hashmaps, stacks / queues / heaps, binary search trees, recursion, sorting</li>
+          <li><strong>Modules</strong> &mdash; import, lambdas, decorators, iterators, regular expressions, variable scope</li>
+          <li><strong>Package managers &amp; idioms</strong> &mdash; pip / Poetry / uv, comprehensions, generators, context managers, <code>pyproject.toml</code>, programming paradigms</li>
+          <li><strong>Object-oriented programming</strong> &mdash; classes, methods, inheritance, encapsulation</li>
+          <li><strong>Environments</strong> &mdash; virtualenv, Pipenv, pyenv</li>
+          <li><strong>Concurrency</strong> &mdash; the GIL, threading, multiprocessing, asyncio</li>
+          <li><strong>Static typing</strong> &mdash; typing, mypy, pyright, pyre, Pydantic</li>
+          <li><strong>Tooling</strong> &mdash; black, yapf, ruff, Sphinx, file handling</li>
+          <li><strong>Testing</strong> &mdash; unittest, doctest, pytest, tox</li>
+          <li><strong>Web frameworks</strong> &mdash; Flask, Django, FastAPI, and async frameworks</li>
+          <li><strong>More Python</strong> &mdash; structural pattern matching, a standard-library tour</li>
+        </ul>
+        <p>Lesson material is adapted from Harvard's <em>CS50's Introduction to Programming with
+        Python</em> and the official Python documentation. The course opens instantly &mdash; no
+        sign-up required.</p>
+      </article>
+      <noscript>
+        <p><strong>PyStart needs JavaScript</strong> to run Python in your browser. Please enable
+        JavaScript and reload the page.</p>
+      </noscript>
+    </div>
   </main>
 </div>
 
@@ -63,7 +179,7 @@
   </div>
 </div>
 
-<script src="assets/curriculum.js?v=11"></script>
-<script src="assets/app.js?v=11"></script>
+<script src="assets/curriculum.js?v=12"></script>
+<script src="assets/app.js?v=12"></script>
 </body>
 </html>

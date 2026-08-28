@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pamkenpa.github.io/pyStart/sitemap.xml

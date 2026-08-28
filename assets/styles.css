@@ -337,6 +337,15 @@ details.solution pre{font-family:var(--mono); font-size:12.5px; background:var(-
 .kbd{font-family:var(--mono); font-size:11px; background:var(--panel-2); border:1px solid var(--line); border-bottom-width:2px; border-radius:5px; padding:1px 5px}
 .hide{display:none !important}
 
+/* Static crawler / no-JS content inside #view. app.js removes it on load;
+   until then (and for no-JS visitors) it reads as a plain intro. */
+.seo-fallback{max-width:760px}
+.seo-fallback h1{font-size:30px; line-height:1.2; margin:.2em 0 .5em}
+.seo-fallback p{margin:12px 0; color:var(--ink-soft)}
+.seo-fallback ul{margin:12px 0; padding-left:22px}
+.seo-fallback li{margin:6px 0; color:var(--ink-soft)}
+.seo-fallback code{font-family:var(--mono); font-size:.9em; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:1px 6px}
+
 /* ---------- "Try this for real" box (concept lessons) ---------- */
 .real-world{
   border:1px solid var(--line); border-left:4px solid var(--warn); background:var(--warn-bg);
