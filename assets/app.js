@@ -922,7 +922,8 @@ function makeExercise(lesson, ex, k) {
       view.dispatchEvent(new CustomEvent("ex-passed"));
     } else {
       verdict.className = "verdict fail";
-      verdict.innerHTML = "<b>Not yet.</b> " + escapeHtml(result.message || "Output didn’t match what was expected.");
+      // message is authored in curriculum.js (trusted) — render its HTML like ex.success / notes do
+      verdict.innerHTML = "<b>Not yet.</b> " + (result.message || "Output didn’t match what was expected.");
       if (result.diff) {
         const d = el("div", "diff");
         d.textContent = result.diff;

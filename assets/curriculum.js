@@ -185,8 +185,8 @@ print("Visible output")   # a comment can sit at the end of a line too
     {
       title: "Commas, not glue",
       tier: "core", uses: [],
-      prompt: `<p>Print this line using <strong>four comma-separated values</strong> in one <code>print</code>
-        (three words and the number):</p><pre>Level up 9000</pre>`,
+      prompt: `<p>Print this line using <strong>three comma-separated values</strong> in one <code>print</code>
+        — two words as strings and the number with no quotes:</p><pre>Level up 9000</pre>`,
       solution: `print("Level", "up", 9000)`,
       success: "Commas add the spaces for you; 9000 needs no quotes.",
       tests: [{ expect: "Level up 9000" }],
@@ -394,9 +394,11 @@ print(type(None))` },
     },
     {
       title: "Label the reading",
-      tier: "core", uses: ["strings (L1)", "\\n escape (L1)"],
-      prompt: `<p>Given <code>label = "CPU temp"</code> and <code>celsius = 63</code>, print exactly
-        (real newline between the lines):</p><pre>CPU temp\n63 C</pre>`,
+      tier: "core", uses: ["variables (L2)", "print with commas (L1)"],
+      prompt: `<p>Given <code>label = "CPU temp"</code> and <code>celsius = 63</code>, print these two
+        lines — the label on its own, then the number followed by <code>C</code>:</p><pre>CPU temp\n63 C</pre>
+        <p>Two <code>print</code> statements is the natural way here; you'll get slicker tools for this
+        in later lessons.</p>`,
       starter: `label = "CPU temp"\ncelsius = 63\n`,
       solution: `label = "CPU temp"\ncelsius = 63\nprint(label)\nprint(celsius, "C")`,
       success: "Variables slot into print alongside literal text.",
@@ -606,12 +608,27 @@ print(count)` },
     },
     {
       title: "Leftover slices",
-      tier: "core", uses: ["% operator (this lesson)"],
-      prompt: `<p>A pizza has <code>8</code> slices and <code>3</code> friends share equally.
-        Print how many slices are <strong>left over</strong>.</p><pre>2</pre>`,
-      solution: `print(8 % 3)`,
-      success: "% is the remainder — the classic use of modulo.",
-      tests: [{ expect: "2" }],
+      tier: "core", uses: ["% operator (this lesson)", "variables (L2)"],
+      prompt: `<p><code>slices = 8</code> and <code>friends = 3</code> are already set. Each friend takes an
+        equal <em>whole</em> number of slices; print how many slices are <strong>left over</strong>.
+        Use the two variables so your code stays correct if the numbers change.</p><pre>2</pre>`,
+      starter: `slices = 8\nfriends = 3\n`,
+      solution: `slices = 8\nfriends = 3\nprint(slices % friends)`,
+      success: "% is the remainder — what's left after taking out every whole group.",
+      require: [
+        { pattern: "\\bslices\\b", hard: true, message: "Use the slices variable that's already set — don't hard-code the answer." },
+        { pattern: "\\bfriends\\b", hard: true, message: "Use the friends variable that's already set — don't hard-code the answer." },
+      ],
+      tests: [
+        { rewrite: [["slices\\s*=\\s*\\d+", "slices = 8"], ["friends\\s*=\\s*\\d+", "friends = 3"]], expect: "2" },
+        { rewrite: [["slices\\s*=\\s*\\d+", "slices = 10"], ["friends\\s*=\\s*\\d+", "friends = 3"]], expect: "1",
+          why: `10 slices, 3 friends → <code>1</code> left over. If you got <code>3</code>, you used <code>//</code> (how many slices <em>each</em>) instead of <code>%</code> (what <em>remains</em>).` },
+        { rewrite: [["slices\\s*=\\s*\\d+", "slices = 9"], ["friends\\s*=\\s*\\d+", "friends = 5"]], expect: "4",
+          why: `9 shared among 5 leaves <code>4</code>. <code>%</code> gives the remainder for any pair of numbers.` },
+      ],
+      antisolutions: [
+        { code: `slices = 8\nfriends = 3\nprint(slices // friends)`, why: "// gives slices-per-friend, not the leftover" },
+      ],
     },
     {
       title: "Evaluate the logic",
@@ -624,24 +641,50 @@ print(count)` },
     {
       title: "In range?",
       tier: "core", uses: ["variables (L2)", "chained comparison (this lesson)"],
-      prompt: `<p>Given <code>n = 47</code>, print a single <code>True</code>/<code>False</code>: is
-        <code>n</code> between <code>1</code> and <code>100</code> inclusive? Use one chained comparison.</p><pre>True</pre>`,
+      prompt: `<p>Given <code>n = 47</code>: is <code>n</code> between <code>1</code> and <code>100</code>
+        <strong>inclusive</strong> (both ends count)? Print the single <code>True</code>/<code>False</code>
+        answer using one chained comparison.</p><pre>True</pre>`,
       starter: `n = 47\n`,
       solution: `n = 47\nprint(1 <= n <= 100)`,
-      success: "0 <= n <= 100 reads like maths and works like it.",
-      review: [{ pattern: "and", tip: `<code>1 &lt;= n and n &lt;= 100</code> works, but Python lets you chain: <code>1 &lt;= n &lt;= 100</code>.` }],
-      tests: [{ expect: "True" }],
+      success: "1 <= n <= 100 reads like maths and works like it.",
+      review: [{ pattern: "\\band\\b", tip: `<code>1 &lt;= n and n &lt;= 100</code> works, but Python lets you chain: <code>1 &lt;= n &lt;= 100</code>.` }],
+      tests: [
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 47"]], expect: "True" },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 1"]], expect: "True",
+          why: `<code>1</code> is inside the range — "inclusive" means use <code>&lt;=</code>, not <code>&lt;</code>.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 100"]], expect: "True",
+          why: `<code>100</code> is inside the range — the upper end counts too.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 0"]], expect: "False",
+          why: `<code>0</code> is below the range — you need a lower bound, not just <code>n &lt;= 100</code>.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 101"]], expect: "False",
+          why: `<code>101</code> is above the range.` },
+      ],
+      antisolutions: [
+        { code: `n = 47\nprint(1 < n < 100)`, why: "strict < excludes the endpoints 1 and 100" },
+        { code: `n = 47\nprint(n <= 100)`, why: "no lower bound — 0 and negatives would pass" },
+      ],
     },
     {
       title: "Use +=",
       tier: "core", uses: ["variables & reassigning (L2)"],
-      prompt: `<p>Start from <code>score = 8</code>. Using <code>+=</code>, add <code>4</code>, then
-        <code>*=</code> by <code>2</code>, then print <code>score</code>.</p><pre>24</pre>`,
+      prompt: `<p>Start from <code>score = 8</code>. Add <code>4</code> to it with <code>+=</code>, then
+        double it with <code>*= 2</code>, then print <code>score</code>. (Order matters: add first,
+        then double — <code>(8 + 4) * 2</code>.)</p><pre>24</pre>`,
       starter: `score = 8\n`,
       solution: `score = 8\nscore += 4\nscore *= 2\nprint(score)`,
       success: "The augmented operators all follow the same shape.",
       require: [{ pattern: "\\+=", tip: `If you wrote it out longhand: correct. <code>score += 4</code> / <code>score *= 2</code> is the shorthand you'll see everywhere.` }],
-      tests: [{ expect: "24" }],
+      tests: [
+        { rewrite: [["score\\s*=\\s*8\\b", "score = 8"]], expect: "24" },
+        { rewrite: [["score\\s*=\\s*8\\b", "score = 10"]], expect: "28",
+          why: `From <code>score = 10</code>: <code>(10 + 4) * 2 = 28</code>. If you got <code>24</code> you hard-coded the answer instead of computing from <code>score</code>.` },
+        { rewrite: [["score\\s*=\\s*8\\b", "score = 0"]], expect: "8",
+          why: `From <code>score = 0</code>: <code>(0 + 4) * 2 = 8</code>.` },
+      ],
+      antisolutions: [
+        { code: `score = 8\nprint(24)`, why: "hard-codes the result instead of computing from score" },
+        { code: `score = 8\nscore *= 2\nscore += 4\nprint(score)`, why: "doubles before adding — wrong order, gives 20" },
+      ],
     },
     {
       title: "Even or odd, no if",
@@ -653,7 +696,14 @@ print(count)` },
       success: "n % 2 == 0 is already a boolean. No if needed.",
       tests: [
         { rewrite: [["n\\s*=\\s*-?\\d+", "n = 14"]], expect: "True" },
-        { advisory: true, rewrite: [["n\\s*=\\s*-?\\d+", "n = 7"]], expect: "False", why: `Should be <code>False</code> for an odd <code>n</code> like 7 — <code>n % 2 == 0</code> handles any number.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 7"]], expect: "False",
+          why: `An odd <code>n</code> like <code>7</code> must print <code>False</code>. <code>n % 2 == 0</code> works for any number; printing <code>n % 2</code> alone would show <code>1</code> instead.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 0"]], expect: "True",
+          why: `<code>0</code> is even.` },
+      ],
+      antisolutions: [
+        { code: `n = 14\nprint(n % 2)`, why: "prints 0/1, not True/False" },
+        { code: `n = 14\nprint(True)`, why: "hard-coded — fails for odd n" },
       ],
     },
     {
@@ -666,7 +716,10 @@ print(count)` },
       success: "// pulls out whole units, % gives what's left for the next unit down.",
       tests: [
         { rewrite: [["seconds\\s*=\\s*\\d+", "seconds = 3725"]], expect: "1 2 5" },
-        { advisory: true, rewrite: [["seconds\\s*=\\s*\\d+", "seconds = 90"]], expect: "0 1 30", why: `Should also work for <code>seconds = 90</code> → <code>0 1 30</code>.` },
+        { rewrite: [["seconds\\s*=\\s*\\d+", "seconds = 90"]], expect: "0 1 30",
+          why: `<code>seconds = 90</code> → <code>0 1 30</code>. Compute every part from <code>seconds</code>, not from the sample.` },
+        { rewrite: [["seconds\\s*=\\s*\\d+", "seconds = 7384"]], expect: "2 3 4",
+          why: `<code>seconds = 7384</code> → <code>2 3 4</code> (2h 3m 4s).` },
       ],
     },
     {
@@ -680,10 +733,16 @@ print(count)` },
       success: "Parentheses make the and/or grouping unambiguous.",
       tests: [
         { expect: "True" },
-        { advisory: true, rewrite: [["accompanied\\s*=\\s*True", "accompanied = False"]], expect: "False",
-          why: `A 15-year-old who is a member but not accompanied should get <code>False</code> — check your and/or grouping with parentheses.` },
-        { advisory: true, rewrite: [["is_member\\s*=\\s*True", "is_member = False"]], expect: "False",
+        { rewrite: [["accompanied\\s*=\\s*True", "accompanied = False"]], expect: "False",
+          why: `A 15-year-old member who is <em>not</em> accompanied must get <code>False</code>. Without parentheses, <code>and</code> binds tighter than <code>or</code> and the grouping is wrong — use <code>is_member and (age &gt;= 18 or accompanied)</code>.` },
+        { rewrite: [["is_member\\s*=\\s*True", "is_member = False"]], expect: "False",
           why: `Not a member → <code>False</code> no matter what else is true.` },
+        { rewrite: [["age\\s*=\\s*15", "age = 20"], ["accompanied\\s*=\\s*True", "accompanied = False"]], expect: "True",
+          why: `An unaccompanied 20-year-old member may enter (adult).` },
+      ],
+      antisolutions: [
+        { code: `is_member = True\nage = 15\naccompanied = True\nprint(is_member and age >= 18 or accompanied)`,
+          why: "no parentheses — evaluates as (is_member and age>=18) or accompanied, wrong grouping" },
       ],
     },
   ],
@@ -1109,8 +1168,13 @@ else:
       success: "The shape: if condition: … else: …",
       tests: [
         { rewrite: [["mark\\s*=\\s*-?\\d+", "mark = 55"]], expect: "pass" },
-        { advisory: true, rewrite: [["mark\\s*=\\s*-?\\d+", "mark = 49"]], expect: "fail", why: `49 should <code>fail</code>.` },
-        { advisory: true, rewrite: [["mark\\s*=\\s*-?\\d+", "mark = 50"]], expect: "pass", why: `Exactly 50 passes — use <code>&gt;= 50</code>.` },
+        { rewrite: [["mark\\s*=\\s*-?\\d+", "mark = 49"]], expect: "fail",
+          why: `<code>49</code> is below 50 → <code>fail</code>. Both branches must be reachable.` },
+        { rewrite: [["mark\\s*=\\s*-?\\d+", "mark = 50"]], expect: "pass",
+          why: `Exactly <code>50</code> counts as "50 or more" → <code>pass</code>. Use <code>&gt;= 50</code>, not <code>&gt; 50</code>.` },
+      ],
+      antisolutions: [
+        { code: `mark = 55\nif mark > 50:\n    print("pass")\nelse:\n    print("fail")`, why: "> 50 excludes 50 itself, but the spec says '50 or more'" },
       ],
     },
     {
@@ -1123,8 +1187,12 @@ else:
       success: "Three outcomes → if / elif / else.",
       tests: [
         { rewrite: [["n\\s*=\\s*-?\\d+", "n = -4"]], expect: "negative" },
-        { advisory: true, rewrite: [["n\\s*=\\s*-?\\d+", "n = 9"]], expect: "positive", why: `9 is positive.` },
-        { advisory: true, rewrite: [["n\\s*=\\s*-?\\d+", "n = 0"]], expect: "zero", why: `0 is neither positive nor negative.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 9"]], expect: "positive", why: `<code>9</code> is positive.` },
+        { rewrite: [["n\\s*=\\s*-?\\d+", "n = 0"]], expect: "zero",
+          why: `<code>0</code> is neither positive nor negative — you need all three branches.` },
+      ],
+      antisolutions: [
+        { code: `n = -4\nif n > 0:\n    print("positive")\nelse:\n    print("negative")`, why: "no zero case — 0 wrongly reports negative" },
       ],
     },
     {
@@ -1137,10 +1205,13 @@ else:
       success: "One test, two possible outcomes.",
       tests: [
         { rewrite: [["age\\s*=\\s*-?\\d+", "age = 20"]], expect: "adult" },
-        { advisory: true, rewrite: [["age\\s*=\\s*-?\\d+", "age = 15"]], expect: "minor",
-          why: `Works here — but with <code>age = 15</code> it should print <code>minor</code>. Make sure both branches are covered.` },
-        { advisory: true, rewrite: [["age\\s*=\\s*-?\\d+", "age = 18"]], expect: "adult",
-          why: `18 itself counts as an adult. The clean way to include the boundary is <code>age &gt;= 18</code>.` },
+        { rewrite: [["age\\s*=\\s*-?\\d+", "age = 15"]], expect: "minor",
+          why: `<code>age = 15</code> must print <code>minor</code> — cover both branches.` },
+        { rewrite: [["age\\s*=\\s*-?\\d+", "age = 18"]], expect: "adult",
+          why: `<code>18</code> itself counts as an adult ("18 or more"). Use <code>age &gt;= 18</code>, not <code>&gt; 18</code>.` },
+      ],
+      antisolutions: [
+        { code: `age = 20\nif age > 18:\n    print("adult")\nelse:\n    print("minor")`, why: "> 18 makes an 18-year-old a minor" },
       ],
     },
     {
@@ -1153,9 +1224,15 @@ else:
       success: "A branch can print a variable, not just a literal.",
       tests: [
         { expect: "8" },
-        { advisory: true, rewrite: [["b\\s*=\\s*\\d+", "b = 20"]], expect: "20", why: `Should print <code>b</code> when it's the larger.` },
+        { rewrite: [["b\\s*=\\s*\\d+", "b = 20"]], expect: "20",
+          why: `When <code>b</code> is the larger, print <code>b</code>. Compare the variables — don't just print <code>a</code>.` },
+        { rewrite: [["a\\s*=\\s*\\d+", "a = 3"], ["b\\s*=\\s*\\d+", "b = 3"]], expect: "3",
+          why: `Equal values → either branch is fine, but something must print <code>3</code>.` },
       ],
       review: [{ pattern: "max\\(", tip: `You'll meet <code>max(a, b)</code> in Lesson 10 — for now the if/else is the point.` }],
+      antisolutions: [
+        { code: `a = 8\nb = 5\nprint(a)`, why: "always prints a — wrong when b is larger" },
+      ],
     },
     {
       title: "Letter grade",
@@ -1167,12 +1244,20 @@ else:
       success: "elif chains handle ranges cleanly.",
       tests: [
         { rewrite: [["score\\s*=\\s*-?\\d+", "score = 72"]], expect: "C" },
-        { advisory: true, rewrite: [["score\\s*=\\s*-?\\d+", "score = 95"]], expect: "A",
-          why: `With <code>score = 95</code> this should print <code>A</code>.` },
-        { advisory: true, rewrite: [["score\\s*=\\s*-?\\d+", "score = 80"]], expect: "B",
-          why: `A score of exactly 80 is a <code>B</code>. Include the boundary with <code>score &gt;= 80</code> (not <code>&gt; 80</code>).` },
-        { advisory: true, rewrite: [["score\\s*=\\s*-?\\d+", "score = 70"]], expect: "C",
-          why: `70 is the bottom of the C band — use <code>&gt;= 70</code>.` },
+        { rewrite: [["score\\s*=\\s*-?\\d+", "score = 95"]], expect: "A",
+          why: `<code>score = 95</code> → <code>A</code> (90+).` },
+        { rewrite: [["score\\s*=\\s*-?\\d+", "score = 90"]], expect: "A",
+          why: `Exactly <code>90</code> is an <code>A</code>. Use <code>score &gt;= 90</code>, not <code>&gt; 90</code>.` },
+        { rewrite: [["score\\s*=\\s*-?\\d+", "score = 80"]], expect: "B",
+          why: `Exactly <code>80</code> is a <code>B</code>. Every band boundary uses <code>&gt;=</code>.` },
+        { rewrite: [["score\\s*=\\s*-?\\d+", "score = 70"]], expect: "C",
+          why: `<code>70</code> is the bottom of the C band — <code>&gt;= 70</code>.` },
+        { rewrite: [["score\\s*=\\s*-?\\d+", "score = 69"]], expect: "F",
+          why: `Below <code>70</code> → <code>F</code>.` },
+      ],
+      antisolutions: [
+        { code: `score = 72\nif score > 90:\n    print("A")\nelif score > 80:\n    print("B")\nelif score > 70:\n    print("C")\nelse:\n    print("F")`,
+          why: "> instead of >= — 90/80/70 fall through to the wrong band" },
       ],
     },
     {
@@ -1185,10 +1270,13 @@ else:
       success: "Negatives compare just like you'd expect.",
       tests: [
         { rewrite: [["temp\\s*=\\s*-?\\d+", "temp = -3"]], expect: "freezing" },
-        { advisory: true, rewrite: [["temp\\s*=\\s*-?\\d+", "temp = 8"]], expect: "above freezing",
-          why: `At <code>temp = 8</code> it should say <code>above freezing</code>.` },
-        { advisory: true, rewrite: [["temp\\s*=\\s*-?\\d+", "temp = 0"]], expect: "freezing",
-          why: `Exactly 0 counts as freezing — <code>temp &lt;= 0</code> covers it.` },
+        { rewrite: [["temp\\s*=\\s*-?\\d+", "temp = 8"]], expect: "above freezing",
+          why: `At <code>temp = 8</code> it should say <code>above freezing</code> — both branches must work.` },
+        { rewrite: [["temp\\s*=\\s*-?\\d+", "temp = 0"]], expect: "freezing",
+          why: `Exactly <code>0</code> counts as freezing — use <code>temp &lt;= 0</code>, not <code>&lt; 0</code>.` },
+      ],
+      antisolutions: [
+        { code: `temp = -3\nif temp < 0:\n    print("freezing")\nelse:\n    print("above freezing")`, why: "< 0 wrongly calls 0 'above freezing'" },
       ],
     },
     {
@@ -1201,12 +1289,18 @@ else:
       success: "Chained comparisons read like maths.",
       tests: [
         { rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 14"]], expect: "afternoon" },
-        { advisory: true, rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 9"]], expect: "not afternoon",
+        { rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 9"]], expect: "not afternoon",
           why: `9am isn't the afternoon.` },
-        { advisory: true, rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 18"]], expect: "not afternoon",
-          why: `"up to but not including 18" means 18:00 is NOT afternoon — <code>12 &lt;= hour &lt; 18</code> handles both edges at once.` },
-        { advisory: true, rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 12"]], expect: "afternoon",
-          why: `12:00 counts — the range starts at 12.` },
+        { rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 18"]], expect: "not afternoon",
+          why: `"up to but not including 18" → <code>18</code> is NOT afternoon. Use <code>&lt; 18</code> on the upper end.` },
+        { rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 12"]], expect: "afternoon",
+          why: `<code>12:00</code> counts — the range starts <em>at</em> 12, so <code>&lt;=</code> on the lower end.` },
+        { rewrite: [["hour\\s*=\\s*-?\\d+", "hour = 17"]], expect: "afternoon",
+          why: `<code>17</code> is still before 18.` },
+      ],
+      antisolutions: [
+        { code: `hour = 14\nif 12 <= hour <= 18:\n    print("afternoon")\nelse:\n    print("not afternoon")`, why: "<= 18 wrongly includes 18:00" },
+        { code: `hour = 14\nif 12 < hour < 18:\n    print("afternoon")\nelse:\n    print("not afternoon")`, why: "< 12 wrongly excludes 12:00" },
       ],
     },
     {
@@ -1220,9 +1314,14 @@ else:
       success: "Check the most specific case (both) first.",
       tests: [
         { rewrite: [["n\\s*=\\s*\\d+", "n = 15"]], expect: "FizzBuzz" },
-        { advisory: true, rewrite: [["n\\s*=\\s*\\d+", "n = 9"]], expect: "Fizz", why: `9 → <code>Fizz</code>.` },
-        { advisory: true, rewrite: [["n\\s*=\\s*\\d+", "n = 20"]], expect: "Buzz", why: `20 → <code>Buzz</code>.` },
-        { advisory: true, rewrite: [["n\\s*=\\s*\\d+", "n = 7"]], expect: "7", why: `7 → the number itself.` },
+        { rewrite: [["n\\s*=\\s*\\d+", "n = 9"]], expect: "Fizz", why: `<code>9</code> → <code>Fizz</code> (÷3 only).` },
+        { rewrite: [["n\\s*=\\s*\\d+", "n = 20"]], expect: "Buzz", why: `<code>20</code> → <code>Buzz</code> (÷5 only).` },
+        { rewrite: [["n\\s*=\\s*\\d+", "n = 7"]], expect: "7", why: `<code>7</code> → the number itself.` },
+        { rewrite: [["n\\s*=\\s*\\d+", "n = 30"]], expect: "FizzBuzz", why: `<code>30</code> is ÷3 and ÷5 → check that combined case <em>first</em>, or it prints <code>Fizz</code>.` },
+      ],
+      antisolutions: [
+        { code: `n = 15\nif n % 3 == 0:\n    print("Fizz")\nelif n % 5 == 0:\n    print("Buzz")\nelif n % 3 == 0 and n % 5 == 0:\n    print("FizzBuzz")\nelse:\n    print(n)`,
+          why: "FizzBuzz case is unreachable — the ÷3 branch catches 15 first" },
       ],
     },
     {
@@ -1235,9 +1334,10 @@ else:
       success: "Two boundaries, three prices — the middle is the else.",
       tests: [
         { rewrite: [["age\\s*=\\s*\\d+", "age = 70"]], expect: "8" },
-        { advisory: true, rewrite: [["age\\s*=\\s*\\d+", "age = 10"]], expect: "5", why: `Under 13 → 5.` },
-        { advisory: true, rewrite: [["age\\s*=\\s*\\d+", "age = 30"]], expect: "12", why: `In between → 12.` },
-        { advisory: true, rewrite: [["age\\s*=\\s*\\d+", "age = 65"]], expect: "8", why: `Exactly 65 → 8 (use <code>&gt;= 65</code>).` },
+        { rewrite: [["age\\s*=\\s*\\d+", "age = 10"]], expect: "5", why: `Under 13 → <code>5</code>.` },
+        { rewrite: [["age\\s*=\\s*\\d+", "age = 30"]], expect: "12", why: `In between → <code>12</code>.` },
+        { rewrite: [["age\\s*=\\s*\\d+", "age = 65"]], expect: "8", why: `Exactly <code>65</code> → <code>8</code> (use <code>&gt;= 65</code>).` },
+        { rewrite: [["age\\s*=\\s*\\d+", "age = 12"]], expect: "5", why: `<code>12</code> is still "under 13" → <code>5</code>.` },
       ],
     },
     {
@@ -1250,8 +1350,9 @@ else:
       success: "Floats compare exactly like ints.",
       tests: [
         { rewrite: [["c\\s*=\\s*-?[\\d.]+", "c = 20.0"]], expect: "liquid" },
-        { advisory: true, rewrite: [["c\\s*=\\s*-?[\\d.]+", "c = -5.0"]], expect: "ice", why: `Below 0 → ice.` },
-        { advisory: true, rewrite: [["c\\s*=\\s*-?[\\d.]+", "c = 100.0"]], expect: "steam", why: `Exactly 100 → steam.` },
+        { rewrite: [["c\\s*=\\s*-?[\\d.]+", "c = -5.0"]], expect: "ice", why: `Below 0 → <code>ice</code>.` },
+        { rewrite: [["c\\s*=\\s*-?[\\d.]+", "c = 0.0"]], expect: "ice", why: `Exactly <code>0</code> → <code>ice</code> (use <code>&lt;= 0</code>).` },
+        { rewrite: [["c\\s*=\\s*-?[\\d.]+", "c = 100.0"]], expect: "steam", why: `Exactly <code>100</code> → <code>steam</code> (use <code>&gt;= 100</code>).` },
       ],
     },
     {
@@ -1265,10 +1366,14 @@ else:
       success: "Handle the tie first, then the three ways p1 wins; everything else is p2.",
       tests: [
         { expect: "p1" },
-        { advisory: true, rewrite: [['p2\\s*=\\s*"scissors"', 'p2 = "paper"']], expect: "p2",
-          why: `rock vs paper → player 2 wins → <code>p2</code>.` },
-        { advisory: true, rewrite: [['p2\\s*=\\s*"scissors"', 'p2 = "rock"']], expect: "tie",
-          why: `Same choice → <code>tie</code> (check that first).` },
+        { rewrite: [['p2\\s*=\\s*"scissors"', 'p2 = "rock"']], expect: "tie",
+          why: `rock vs rock → same choice → <code>tie</code> (check equality first).` },
+        { rewrite: [['p1\\s*=\\s*"rock"', 'p1 = "paper"']], expect: "p2",
+          why: `paper vs scissors → scissors wins → <code>p2</code>.` },
+        { rewrite: [['p1\\s*=\\s*"rock"', 'p1 = "scissors"'], ['p2\\s*=\\s*"scissors"', 'p2 = "paper"']], expect: "p1",
+          why: `scissors vs paper → scissors wins → <code>p1</code>.` },
+        { rewrite: [['p1\\s*=\\s*"rock"', 'p1 = "paper"'], ['p2\\s*=\\s*"scissors"', 'p2 = "rock"']], expect: "p1",
+          why: `paper vs rock → paper wins → <code>p1</code>.` },
       ],
     },
   ],
