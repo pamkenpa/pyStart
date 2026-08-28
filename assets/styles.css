@@ -444,141 +444,74 @@ details.solution pre{font-family:var(--mono); font-size:12.5px; background:var(-
 }
 
 /* ============================================================
-   RETRO / 8-BIT THEME LAYER  (appended — overrides above)
-   - Press Start 2P for short labels (the "8-bit" signature)
-   - VT323 for headings & UI chrome (readable pixel font)
-   - system sans stays on lesson prose so reading is easy
-   - hard offset shadows, blocky corners, scanlines, blinking cursor
+   RETRO ACCENT LAYER  (appended — overrides above)
+   Readability first: NO pixel font on running text, NO scanlines.
+   The "8-bit" feel comes from chunky shadowed cards, arcade buttons,
+   blocky corners/dividers, a pixel logo + blinking cursor, and a
+   little invader on the home hero.  All text stays in the normal
+   readable fonts at their normal sizes.
    ============================================================ */
 @font-face{
   font-family:"Press Start 2P";
   src:url("fonts/press-start-2p-latin.woff2") format("woff2");
   font-weight:400; font-style:normal; font-display:swap;
 }
-@font-face{
-  font-family:"VT323";
-  src:url("fonts/vt323-latin.woff2") format("woff2");
-  font-weight:400; font-style:normal; font-display:swap;
-}
 :root{
-  --display:"Press Start 2P","VT323",var(--sans);
-  --ui:"VT323",ui-monospace,var(--mono);
-  --radius:3px;
-  --pixel-shadow:rgba(20,26,34,.22);
+  --radius:4px;
+  --pixel-shadow:rgba(20,26,34,.20);
 }
-:root[data-theme="dark"]{ --pixel-shadow:rgba(0,0,0,.55) }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --pixel-shadow:rgba(0,0,0,.55) } }
+:root[data-theme="dark"]{ --pixel-shadow:rgba(0,0,0,.5) }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --pixel-shadow:rgba(0,0,0,.5) } }
 
-/* ---- short labels: Press Start 2P ---- */
-.brand-name{font-family:var(--display); font-size:13px; letter-spacing:.5px; line-height:1.35}
-.eyebrow{font-family:var(--display); font-size:9px; letter-spacing:.5px; text-transform:none}
-.ex-head .ex-tag{font-family:var(--display); font-size:8.5px; letter-spacing:.3px}
-.ex-tier{font-family:var(--display); font-size:7.5px; letter-spacing:0}
-.home-card .hc-num{font-family:var(--display); font-size:8.5px}
-/* multi-word section labels: VT323 (Press Start 2P wraps too hard here) */
-.nav-section{font-family:var(--ui); font-size:12px; letter-spacing:1.5px; line-height:1.4}
-.home-section{font-family:var(--ui); font-size:16px; letter-spacing:2px}
-.ref-section{font-family:var(--ui); font-size:14px; letter-spacing:1.5px}
-
-/* ---- headings & chrome: VT323 (bumped up ~1.25x for legibility) ---- */
-.brand-tag{font-family:var(--ui); font-size:13px}
-.nav-title{font-family:var(--ui); font-size:15.5px; line-height:1.15; padding-top:2px}
-.nav-sub{font-family:var(--ui); font-size:13px}
-.progress-text{font-family:var(--ui); font-size:12px; letter-spacing:.6px}
-h1.lesson-title{font-family:var(--ui); font-size:36px; line-height:1.05; letter-spacing:.5px}
-.lesson-lead{font-family:var(--ui); font-size:19.5px; line-height:1.3}
-.lesson-body h2{font-family:var(--ui); font-size:26px; line-height:1.1; letter-spacing:.5px}
-.lesson-body h3{font-family:var(--ui); font-size:20px; line-height:1.15}
-.home-hero h1{font-family:var(--ui); font-size:38px; line-height:1.05; letter-spacing:.5px}
-.home-hero p{font-family:var(--ui); font-size:18.5px; line-height:1.35}
-.home-card .hc-title{font-family:var(--ui); font-size:17px; line-height:1.15}
-.home-card .hc-desc{font-family:var(--ui); font-size:14px; line-height:1.25}
-.home-card .hc-state{font-family:var(--ui); font-size:13px}
-.ex-head h3{font-family:var(--ui); font-size:19px; line-height:1.15}
-.exercises > h2{font-family:var(--ui); font-size:24px}
-.cell-bar, .cell-title{font-family:var(--ui); font-size:13px; letter-spacing:.3px}
-.primary-btn,.check-btn,.subtle-btn,.ghost-btn,.mini-btn,.br-btn{font-family:var(--ui); font-size:14px; letter-spacing:.4px}
-.mini-btn{font-size:13px}
-.complete-banner{font-family:var(--ui); font-size:16px}
-.verdict{font-family:var(--ui); font-size:15.5px}
-.backup-reminder{font-family:var(--ui); font-size:12.5px}
-.backup-reminder .br-meta{font-size:12px}
-.tbl th{font-family:var(--ui); font-size:14px; letter-spacing:.4px}
-.you-need b,.whatif > b,.predict b,.real-world > b,.note b,.tip b,.warn b,.analogy b,.review-note b{font-family:var(--ui); font-size:12.5px; letter-spacing:.4px}
-.ill-fig figcaption{font-family:var(--ui); font-size:14px}
-.ref-card h3{font-family:var(--ui); font-size:17px}
-
-/* keep lesson reading text in the comfortable sans, just a touch larger */
-.lesson-body p, .lesson-body li, .ex-body p, .ex-body > div, .whatif li,
-.ref-intro, .ref-card .ref-sum, .seo-fallback p, .seo-fallback li{
-  font-family:var(--sans); font-size:15.5px; line-height:1.66;
+/* the only pixel-font text: the brand wordmark */
+.brand-name{
+  font-family:"Press Start 2P", var(--sans);
+  font-size:12px; letter-spacing:.5px; line-height:1.4;
 }
 
-/* ---- blocky corners + hard offset shadows (the "pixel card" look) ---- */
+/* ---- chunky shadowed "pixel cards" ---- */
 .cell,.exercise,.home-card,.ref-card,.ill{
   border-width:2px; box-shadow:4px 4px 0 var(--pixel-shadow);
 }
 .note,.tip,.warn,.analogy,.predict,.whatif,.you-need,.real-world,
-.backup-reminder,.complete-banner,.verdict,details.solution,.hint-box{
-  border-radius:3px;
-}
-.progress-track,.progress-fill{border-radius:2px}
-.nav-badge{border-radius:3px}
-.brand-logo{border-radius:4px}
-.ex-count,.ex-uses span{border-radius:3px}
+.backup-reminder,.complete-banner,.verdict,details.solution,.hint-box{ border-radius:4px }
+.progress-track,.progress-fill{ border-radius:3px }
+.nav-badge{ border-radius:4px }
+.ex-count,.ex-uses span{ border-radius:4px }
 
-/* ---- arcade buttons: solid border + hard shadow, press-down on click ---- */
+/* ---- arcade buttons: hard shadow, press-down on click ---- */
 .primary-btn,.check-btn,.subtle-btn,.ghost-btn,.mini-btn,.br-btn{
-  border-radius:3px; box-shadow:3px 3px 0 var(--pixel-shadow);
+  border-radius:4px; box-shadow:3px 3px 0 var(--pixel-shadow);
   transition:transform .04s, box-shadow .04s;
 }
-.primary-btn,.check-btn,.br-btn{border:2px solid rgba(0,0,0,.28)}
+.primary-btn,.check-btn,.br-btn{ border:2px solid rgba(0,0,0,.25) }
 .primary-btn:active,.check-btn:active,.subtle-btn:active,.ghost-btn:active,.mini-btn:active,.br-btn:active{
   transform:translate(3px,3px); box-shadow:none;
 }
-.primary-btn:disabled,.check-btn:disabled{transform:none; box-shadow:3px 3px 0 var(--pixel-shadow)}
+.primary-btn:disabled,.check-btn:disabled{ transform:none; box-shadow:3px 3px 0 var(--pixel-shadow) }
 
 /* ---- blocky dividers ---- */
 .nav-section{
-  border-top:2px solid var(--line);
+  border-top:2px solid var(--line); padding-bottom:8px;
   background:repeating-linear-gradient(90deg,var(--muted) 0 5px,transparent 5px 10px) bottom left / 100% 2px no-repeat;
-  padding-bottom:8px;
 }
-.nav-section:first-child{border-top:0}
+.nav-section:first-child{ border-top:0 }
 .exercises{
-  border-top:0;
+  border-top:0; padding-top:28px;
   background:repeating-linear-gradient(90deg,var(--accent) 0 8px,transparent 8px 16px) top left / 100% 4px no-repeat;
-  padding-top:28px;
 }
 
-/* ---- blinking terminal cursor in the brand mark ---- */
+/* ---- blinking terminal cursor in the logo ---- */
 @keyframes pixel-blink{ 0%,49%{opacity:1} 50%,100%{opacity:0} }
 .brand-logo .blink{ animation:pixel-blink 1.1s steps(1,end) infinite }
 
-/* ---- faint CRT scanlines over everything (very subtle) ---- */
-body::after{
-  content:""; position:fixed; inset:0; pointer-events:none; z-index:9998;
-  background:repeating-linear-gradient(0deg, rgba(0,0,0,.035) 0 1px, transparent 1px 3px);
-}
-:root[data-theme="dark"] body::after{ background:repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px) }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) body::after{ background:repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px) } }
-
 /* ---- chunkier focus ring ---- */
-:focus-visible{ outline:3px solid var(--accent); outline-offset:2px; border-radius:2px }
+:focus-visible{ outline:3px solid var(--accent); outline-offset:2px; border-radius:3px }
 
-/* ---- pixel-invader motif on the home hero ---- */
+/* ---- small pixel-invader on the home hero ---- */
 .home-hero{
-  position:relative;
+  position:relative; padding-top:8px;
   background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="44" height="32" viewBox="0 0 11 8"><g fill="%234d84ff"><rect x="2" width="1" height="1"/><rect x="8" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="2" y="2" width="7" height="1"/><rect x="1" y="3" width="2" height="1"/><rect x="4" y="3" width="3" height="1"/><rect x="8" y="3" width="2" height="1"/><rect y="4" width="11" height="1"/><rect y="5" width="1" height="1"/><rect x="2" y="5" width="7" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="9" y="6" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/></g></svg>') no-repeat top right;
-  background-size:88px 64px;
-  padding-top:8px;
+  background-size:80px 58px;
 }
-
-/* ---- responsive: rein in the display font on small screens ---- */
-@media (max-width:560px){
-  h1.lesson-title{font-size:28px}
-  .home-hero h1{font-size:28px}
-  .lesson-body h2{font-size:22px}
-  .home-section{font-size:14px}
-  .home-hero{background-size:60px 44px}
-}
+@media (max-width:560px){ .home-hero{ background-size:56px 40px } }
