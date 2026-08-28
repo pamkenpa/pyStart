@@ -444,69 +444,42 @@ details.solution pre{font-family:var(--mono); font-size:12.5px; background:var(-
 }
 
 /* ============================================================
-   8-BIT THEME  (appended — overrides above)
-   Every font is a pixel font:
-     - Pixelify Sans  -> all body text, UI, most headings (the most
-       legible pixel font; used everywhere via --sans)
-     - Press Start 2P -> brand + big display headings + short labels
-     - VT323          -> code / editor / <pre> (terminal font, via --mono)
-   No scanlines. Sizes bumped so the pixel grid stays legible.
+   JETBRAINS MONO THEME  (appended — overrides above)
+   One typeface everywhere (SIL OFL 1.1, self-hosted).
+   Hierarchy comes from weight. Retro visual touches kept:
+   hard card shadows, arcade buttons, blocky corners/dividers,
+   blinking cursor, hero invader.
    ============================================================ */
 @font-face{
-  font-family:"Pixelify Sans";
-  src:url("fonts/pixelify-sans-latin.woff2") format("woff2");
-  font-weight:400 700; font-style:normal; font-display:swap;
-}
-@font-face{
-  font-family:"Press Start 2P";
-  src:url("fonts/press-start-2p-latin.woff2") format("woff2");
-  font-weight:400; font-style:normal; font-display:swap;
-}
-@font-face{
-  font-family:"VT323";
-  src:url("fonts/vt323-latin.woff2") format("woff2");
-  font-weight:400; font-style:normal; font-display:swap;
+  font-family:"JetBrains Mono";
+  src:url("fonts/jetbrains-mono-latin.woff2") format("woff2");
+  font-weight:400 800; font-style:normal; font-display:swap;
 }
 
 :root{
-  --sans:"Pixelify Sans", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --mono:"VT323", ui-monospace, "Cascadia Mono", "JetBrains Mono", Consolas, Menlo, monospace;
-  --display:"Press Start 2P", "Pixelify Sans", var(--sans);
+  --sans:"JetBrains Mono", ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+  --mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
   --radius:4px;
   --pixel-shadow:rgba(20,26,34,.20);
 }
 :root[data-theme="dark"]{ --pixel-shadow:rgba(0,0,0,.5) }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --pixel-shadow:rgba(0,0,0,.5) } }
 
-/* Pixelify Sans runs a little small — nudge the reading text up */
-body{ font-size:16.5px }
+/* JetBrains Mono is wide — ease body text down slightly + tighten tracking */
+body{ font-size:15px; letter-spacing:-.005em }
 .lesson-body p, .lesson-body li, .ex-body p, .ex-body > div, .whatif li,
-.ref-intro, .ref-card .ref-sum, .seo-fallback p, .seo-fallback li{ font-size:16px; line-height:1.68 }
-.lesson-lead{ font-size:17.5px }
-.lesson-body strong, .ex-body b{ font-weight:700 }
+.ref-intro, .ref-card .ref-sum, .seo-fallback p, .seo-fallback li{ font-size:15px; line-height:1.62 }
+.lesson-lead{ font-size:16px; font-weight:500 }
 
-/* ---- Press Start 2P: brand, big headings, short labels (kept small) ---- */
-.brand-name{ font-family:var(--display); font-size:12px; letter-spacing:.5px; line-height:1.45 }
-h1.lesson-title{ font-family:var(--display); font-size:21px; line-height:1.25; letter-spacing:0 }
-.home-hero h1{ font-family:var(--display); font-size:22px; line-height:1.3; letter-spacing:0 }
-.eyebrow{ font-family:var(--display); font-size:9.5px; letter-spacing:.5px }
-.nav-section{ font-family:var(--display); font-size:9px; letter-spacing:.3px; line-height:1.7 }
-.home-section{ font-family:var(--display); font-size:12px; letter-spacing:.5px; line-height:1.5 }
-.eyebrow,.nav-section,.home-section{ text-transform:none }
-
-/* ---- other headings: Pixelify Sans, a touch bigger ---- */
-.lesson-body h2{ font-size:24px; line-height:1.2 }
-.lesson-body h3{ font-size:19px }
-.exercises > h2{ font-size:23px }
-.ex-head h3{ font-size:17px }
-
-/* ---- VT323 for code: bump size so it's crisp & readable ---- */
-.editor-hl,.editor-ta,.gutter{ font-size:15px; line-height:1.55 }
-.lesson-body code, .ex-body code, .review-note code, p code{ font-size:1.02em; padding:0 5px }
-.kbd{ font-size:13px }
-details.solution pre, .real-world pre, pre{ font-size:15px; line-height:1.5 }
-.console{ font-size:14.5px; line-height:1.5 }
-.tok-com{ font-style:normal }
+/* one family -> lean on weight for hierarchy */
+h1.lesson-title, .home-hero h1{ font-weight:800; letter-spacing:-.02em }
+.lesson-body h2, .lesson-body h3, .exercises > h2, .ex-head h3,
+.home-card .hc-title, .brand-name{ font-weight:700 }
+.eyebrow, .nav-section, .home-section, .ex-head .ex-tag, .ex-tier,
+.progress-text, .tbl th, .cell-title{ font-weight:700 }
+.nav-title{ font-weight:500 }
+.primary-btn,.check-btn,.subtle-btn,.ghost-btn,.mini-btn,.br-btn{ font-weight:600; letter-spacing:0 }
+.tok-kw,.tok-bif{ font-weight:700 }
 
 /* ---- chunky shadowed "pixel cards" ---- */
 .cell,.exercise,.home-card,.ref-card,.ill{
@@ -515,13 +488,12 @@ details.solution pre, .real-world pre, pre{ font-size:15px; line-height:1.5 }
 .note,.tip,.warn,.analogy,.predict,.whatif,.you-need,.real-world,
 .backup-reminder,.complete-banner,.verdict,details.solution,.hint-box{ border-radius:4px }
 .progress-track,.progress-fill{ border-radius:3px }
-.nav-badge{ border-radius:4px }
-.ex-count,.ex-uses span{ border-radius:4px }
+.nav-badge,.ex-count,.ex-uses span{ border-radius:4px }
 
 /* ---- arcade buttons: hard shadow, press-down on click ---- */
 .primary-btn,.check-btn,.subtle-btn,.ghost-btn,.mini-btn,.br-btn{
   border-radius:4px; box-shadow:3px 3px 0 var(--pixel-shadow);
-  transition:transform .04s, box-shadow .04s; letter-spacing:.3px;
+  transition:transform .04s, box-shadow .04s;
 }
 .primary-btn,.check-btn,.br-btn{ border:2px solid rgba(0,0,0,.25) }
 .primary-btn:active,.check-btn:active,.subtle-btn:active,.ghost-btn:active,.mini-btn:active,.br-btn:active{
@@ -553,36 +525,4 @@ details.solution pre, .real-world pre, pre{ font-size:15px; line-height:1.5 }
   background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="44" height="32" viewBox="0 0 11 8"><g fill="%234d84ff"><rect x="2" width="1" height="1"/><rect x="8" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="2" y="2" width="7" height="1"/><rect x="1" y="3" width="2" height="1"/><rect x="4" y="3" width="3" height="1"/><rect x="8" y="3" width="2" height="1"/><rect y="4" width="11" height="1"/><rect y="5" width="1" height="1"/><rect x="2" y="5" width="7" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="9" y="6" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/></g></svg>') no-repeat top right;
   background-size:80px 58px;
 }
-
-/* ---- responsive: rein in the display font on small screens ---- */
-@media (max-width:560px){
-  h1.lesson-title{ font-size:17px }
-  .home-hero h1{ font-size:17px; background-size:0 }
-  .lesson-body h2{ font-size:20px }
-  .home-section{ font-size:10px }
-  .nav-section{ font-size:8px }
-}
-
-/* ---- 8-bit: raise the smallest UI text so the pixel font stays legible ---- */
-.editor-hl,.editor-ta,.gutter{ font-size:16px }
-.console{ font-size:15px }
-details.solution pre, .real-world pre, pre{ font-size:15.5px }
-.nav-sub{ font-size:13px }
-.brand-tag{ font-size:13px }
-.progress-text{ font-size:12.5px; letter-spacing:.3px }
-.home-card .hc-desc{ font-size:14px; line-height:1.4 }
-.home-card .hc-num{ font-size:12px }
-.home-card .hc-state{ font-size:13.5px }
-.wi-foot{ font-size:12.5px }
-.ex-uses{ font-size:12.5px }
-.ex-uses span{ font-size:12px }
-.ex-tier{ font-size:11px }
-.ex-count{ font-size:12px }
-.ex-status{ font-size:13px }
-.nav-badge{ font-size:12px }
-.br-meta{ font-size:12.5px }
-.engine-status{ font-size:12.5px }
-.cell-bar{ font-size:12.5px }
-.review-note b{ font-size:12px }
-.modal-sub{ font-size:14px }
-.ill text{ font-size:13px }
+@media (max-width:560px){ .home-hero{ background-size:56px 40px } }
